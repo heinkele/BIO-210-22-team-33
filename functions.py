@@ -90,3 +90,4 @@ def dynamics_async(state, weights, max_iter, convergence_num_iter):
             rep=0
         history.append(u)
     return history
+    
