@@ -11,3 +11,4 @@ W = f.hebbian_weights(memorized_patterns)
 dynamic_test = f.dynamics(perturbed_pattern,W,20)
 if (dynamic_test==memorized_patterns[2]):
     print ("Vous etes trop forts")
+
