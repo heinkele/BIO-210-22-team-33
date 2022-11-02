@@ -3,8 +3,11 @@ import numpy as np
 
 def generate_patterns(num_patterns, pattern_size):
     my_list =[-1,1]
-    a=[np.random.choice(my_list,pattern_size) for j in range(num_patterns)]
-    return a
+    b=np.zeros((num_patterns,pattern_size))
+    for i in range (num_patterns):
+        for j in range (pattern_size):
+            b[i][j]+=[np.random.choice(my_list)]
+    return b
 
 def generate_coord(num_patterns,pattern_size):
     x=np.random.randint(num_patterns)
@@ -12,19 +15,18 @@ def generate_coord(num_patterns,pattern_size):
     return [x,y]
 
 def perturb_pattern(pattern, num_perturb):
-    list_coord=[]
-    for i in range (num_perturb):
-       # new_coord=generate_coord(pattern.shape[0],pattern.shape[1])
-        condition=False
-        if i>2:
+    list_coord=[generate_coord(pattern.shape[0],pattern.shape[1])]
+    for i in range (1,num_perturb):
+        counter = 0
+        new_coord=generate_coord(pattern.shape[0],pattern.shape[1])
+        while (counter!=i-1):
             for k in range (i-1):
-                if [list_coord(k),list_coord(k+1)]!=generate_coord(pattern.shape[0],pattern.shape[1]):
-                    condition=True
+                if list_coord(k)!=new_coord :
+                    counter+=1
                 else :
-                    condition=False
-                    break
-        if condition==True:
-            list_coord.append(generate_coord(pattern.shape[0],pattern.shape[1]))
+                    new_coord=generate_coord(pattern.shape[0],pattern.shape[1])
+                    k=-1 #on recommence le test d'egalite de 0 (k sera incremente au debut de la boucle for et vaudra donc 0)
+        list_coord.append(new_coord)
     
     p_0 = pattern
     for i in range (num_perturb):
@@ -90,4 +92,20 @@ def dynamics_async(state, weights, max_iter, convergence_num_iter):
             rep=0
         history.append(u)
     return history
+
+def storkey_weights(patterns):
+    num_patterns = patterns.shape[0]
+    W = np.zeros((num_patterns,num_patterns))
+    W_prev =  W #premier w que de 0
+    H=np.array((num_patterns, num_patterns))
+    for u in range (num_patterns): #numero du pattern 
+        for i in range (1,num_patterns):
+            for j in range (num_patterns):
+
+                for k in range (patterns.shape[1]):#code matrix H 
+                    if (k!=i and k!=j):
+                        H[i][j]+= W_prev[i][k]*patterns[u][k]
     
+                W[i][j]=W_prev[i][j]+(patterns[u][i]*patterns[u][j]-patterns[u][i]*H[j][i]-patterns[u][j]*H[i][j])/num_patterns            
+        W_prev=W #actualisation de "l'ancienne matrice" 
+    return W
