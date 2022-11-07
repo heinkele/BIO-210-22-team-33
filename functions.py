@@ -9,24 +9,27 @@ def generate_patterns(num_patterns, pattern_size):
             b[i][j]+=[np.random.choice(my_list)]
     return b
 
-def generate_coord(num_patterns,pattern_size):
-    x=np.random.randint(num_patterns)
-    y=np.random.randint(pattern_size)
-    return [x,y]
+def generate_coord(pattern_size):
+    x=np.random.randint(pattern_size)
+    return x
 
 def perturb_pattern(pattern, num_perturb):
-    list_coord=[generate_coord(pattern.shape[0],pattern.shape[1])]
+    list_coord=[generate_coord(pattern.shape)]
     for i in range (1,num_perturb):
         counter = 0
-        new_coord=generate_coord(pattern.shape[0],pattern.shape[1])
-        while (counter!=i-1):
-            for k in range (i-1):
-                if list_coord(k)!=new_coord :
-                    counter+=1
-                else :
-                    new_coord=generate_coord(pattern.shape[0],pattern.shape[1])
-                    k=-1 #on recommence le test d'egalite de 0 (k sera incremente au debut de la boucle for et vaudra donc 0)
+        new_coord=generate_coord(pattern.shape)
+        for k in range (i-1):
+            if list_coord[k]!=new_coord :
+                counter+=1
+                if counter==i-1 :
+                    break 
+            else :
+                new_coord=generate_coord(pattern.shape)
+                k=-1 #on recommence le test d'egalite de 0 (k sera incremente au debut de la boucle for et vaudra donc 0)
+                counter=0
+            k+=1
         list_coord.append(new_coord)
+        i+=1
     
     p_0 = pattern
     for i in range (num_perturb):
@@ -40,8 +43,8 @@ def pattern_match(memorized_patterns, pattern):
             return l
 
 def hebbian_weights(patterns):
-    W=np.zeros((50,50))
-    for i in range (patterns.shape[1]):
+    W=np.zeros((patterns.shape[1],patterns.shape[1]))
+    for i in range (patterns.shape[0]):
         for j in range(patterns.shape[1]):
             if i==j : 
                 W[i][j]=0
@@ -50,13 +53,13 @@ def hebbian_weights(patterns):
                     W[i][j]+=(1/patterns.shape[0])*patterns[k][i]*patterns[k][j]
     return W
 
-def update(state, weights): 
+def update(state, weights):
     for i in range (state.shape[0]) : 
-        for j in range (state.shape[1]) : 
-            if state[i][j] * weights[i][j] >= 0 :
-                state[i][j] = 1
+        for j in range (weights.shape[1]) : 
+            if state[i] * weights[i][j] >= 0 :
+                state[i] = 1
             else :
-                state[i][j] = -1
+                state[i] = -1
     return state
 
 def update_async(state, weights):
@@ -72,7 +75,7 @@ def dynamics(state, weights, max_iter):
     T=1
     u=update(state, weights)
     history = [u]
-    while (state != u) and (T < max_iter) : 
+    while (state.all() != u.all()) and (T < max_iter) : 
         u=update(u, weights)
         history.append(u)
         T += 1
@@ -95,7 +98,8 @@ def dynamics_async(state, weights, max_iter, convergence_num_iter):
 
 def storkey_weights(patterns):
     num_patterns = patterns.shape[0]
-    W = np.zeros((num_patterns,num_patterns))
+    pattern_size = patterns.shape[1]
+    W = np.zeros((pattern_size,num_patterns))
     W_prev =  W #premier w que de 0
     H=np.array((num_patterns, num_patterns))
     for u in range (num_patterns): #numero du pattern 
