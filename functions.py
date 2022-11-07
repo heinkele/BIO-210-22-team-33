@@ -64,11 +64,11 @@ def update(state, weights):
 
 def update_async(state, weights):
     i = np.random.randint(0, state.shape[0])
-    for j in range (state.shape[1]):
-        if state[i][j] * weights[i][j] >= 0 :
-            state[i][j] = 1
+    for j in range (weights.shape[1]):
+        if state[i]* weights[i][j] >= 0 :
+            state[i] = 1
         else :
-            state[i][j] = -1
+            state[i] = -1
     return state
 
 def dynamics(state, weights, max_iter):
@@ -89,7 +89,7 @@ def dynamics_async(state, weights, max_iter, convergence_num_iter):
     while (rep!=convergence_num_iter) and (T < max_iter):
         v=u 
         u = update_async(u, weights)
-        if (v == u):
+        if ((v == u).all()):
             rep+=1
         else :
             rep=0
