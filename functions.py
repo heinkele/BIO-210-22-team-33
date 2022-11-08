@@ -2,6 +2,19 @@ from sre_parse import State
 import numpy as np 
 
 def generate_patterns(num_patterns, pattern_size):
+
+    """Generate the patterns to memorize
+    Parameters :
+    -----------------
+    num_patterns : int
+    pattern_size : int
+
+    Return :
+    --------------
+    Two dimensional numpy array b
+    Each row of b is a random pattern of {1, -1} (num_patterns rows of pattern_size columns)
+    """
+
     my_list =[-1,1]
     b=np.zeros((num_patterns,pattern_size))
     for i in range (num_patterns):
@@ -10,10 +23,25 @@ def generate_patterns(num_patterns, pattern_size):
     return b
 
 def generate_coord(pattern_size):
+
+    """Generate a random number which represent the coordonnate of the element we want to reach in the pattern"""
+
     x=np.random.randint(pattern_size)
     return x
 
 def perturb_pattern(pattern, num_perturb):
+
+    """Pertube a given pattern
+    Parameters :
+    -----------------
+    pattern : 1 dimensional numpy array (a binary pattern)
+    num_perturb : int
+
+    Return :
+    --------------
+    1 dimensional numpy array p_0 (perturbed pattern)
+    """
+
     list_coord=[generate_coord(pattern.shape)]
     for i in range (1,num_perturb):
         counter = 0
@@ -38,11 +66,35 @@ def perturb_pattern(pattern, num_perturb):
     return p_0 
 
 def pattern_match(memorized_patterns, pattern):
+
+    """Match a pattern with the corresponding memorized one (see if there is a match and where)
+    Parameters :
+    -----------------
+    memorized_paterns : 2 dimensional numpy array (Matrix of the initialized memorized patterns, obtained with generate_patterns)
+    pattern : 1 dimensional numpy array (pattern of intersest)
+
+    Return :
+    --------------
+    None : no match
+    l : the index of the row corresponding to the matching pattern. (int)
+    """
+
     for l in range(memorized_patterns.shape[0]):
         if (pattern == memorized_patterns[l]):
             return l
 
 def hebbian_weights(patterns):
+
+    """Apply the hebbian learning rule on some given patterns to create the weight matrix.
+    Parameters :
+    -----------------
+    patterns : 2 dimensional numpy array 
+
+    Return :
+    --------------
+    W : 2 dimensional numpy array p_0 (weight matrix)
+    """
+
     W=np.zeros((patterns.shape[1],patterns.shape[1]))
     for i in range (patterns.shape[0]):
         for j in range(patterns.shape[1]):
@@ -54,6 +106,18 @@ def hebbian_weights(patterns):
     return W
 
 def update(state, weights):
+
+    """Apply the update rule to a state pattern.
+    Parameters :
+    -----------------
+    state : 1 dimensional numpy array (pattern state)
+    weigths : 2 dimensional numpy array (weight matrix)
+
+    Return :
+    --------------
+    state : 1 dimensional numpy array state (pattern state updtated)
+    """
+
     for i in range (state.shape[0]) : 
         for j in range (weights.shape[1]) : 
             if state[i] * weights[i][j] >= 0 :
@@ -63,6 +127,18 @@ def update(state, weights):
     return state
 
 def update_async(state, weights):
+
+    """Apply the asynchronous update rule to a state pattern (only for the i-th component of state)
+    Parameters :
+    -----------------
+    state : 1 dimensional numpy array (pattern state)
+    weigths : 2 dimensional numpy array (weight matrix)
+
+    Return :
+    --------------
+    state : 1 dimensional numpy array state (pattern state with the i-th component updtated)
+    """
+
     i = np.random.randint(0, state.shape[0])
     for j in range (weights.shape[1]):
         if state[i]* weights[i][j] >= 0 :
@@ -72,6 +148,20 @@ def update_async(state, weights):
     return state
 
 def dynamics(state, weights, max_iter):
+
+    """Run the dynamical system from an initial state until convergence or until a maximum number of steps is reached.
+       Convergence is achieved when two consecutive updates return the same state.
+    Parameters :
+    -----------------
+    state : 1 dimensional numpy array (pattern state)
+    weigths : 2 dimensional numpy array (weight matrix)
+    max_iter : int (maximum of iteration allowed)
+
+    Return :
+    --------------
+    history : a list with the whole state history. (list of 1 dimensional numpy array)
+    """
+
     T=1
     u=update(state, weights)
     history = [u]
@@ -82,6 +172,21 @@ def dynamics(state, weights, max_iter):
     return history
 
 def dynamics_async(state, weights, max_iter, convergence_num_iter):
+
+    """Run the dynamical system from an initial state until convergence or until a maximum number of steps is reached.
+       Convergence is achieved when the solution does not change for convergence num iter steps in a row
+    Parameters :
+    -----------------
+    state : 1 dimensional numpy array (pattern state)
+    weigths : 2 dimensional numpy array (weight matrix)
+    max_iter : int (maximum of iteration allowed)
+    convergence_num_iter int (criteria of convergence)
+
+    Return :
+    --------------
+    history : a list with the whole state history. (list of 1 dimensional numpy array)
+    """
+
     T = 1
     u = update_async(state, weights)
     history = [u]
@@ -97,6 +202,17 @@ def dynamics_async(state, weights, max_iter, convergence_num_iter):
     return history
 
 def storkey_weights(patterns):
+
+    """Apply the Storkey learning rule for some patterns to create the weight matrix
+    Parameters :
+    -----------------
+    patterns : 2 dimensional numpy array (some patterns)
+
+    Return :
+    --------------
+    W : 2 dimensional numpy array (weigth matrix)
+    """
+
     num_patterns = patterns.shape[0]
     pattern_size = patterns.shape[1]
     W = np.zeros((pattern_size,num_patterns))
