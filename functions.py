@@ -1,5 +1,6 @@
 from sre_parse import State
 import numpy as np 
+import  matplotlib.pyplot as plt 
 
 def generate_patterns(num_patterns, pattern_size):
 
@@ -245,7 +246,7 @@ def energy(state, weights) :
 
 # the update function does not function. do we need to do a deepcopy of state ? we are lost
 
-def generate_checkerboard():
+def generate_initial_checkerboard():
     axis_x = np.ones(50)
     counter = 0
     i=5
@@ -263,3 +264,31 @@ def generate_checkerboard():
     print (checkboard)
     print (checkboard.shape[0], checkboard.shape[1])
     return checkboard
+
+def flatten_checkerboard(checkerboard):
+    flatten_checkerboard = checkerboard.reshape(1,2500)
+    return flatten_checkerboard 
+
+def vector_to_matrix(pattern):
+    matrix = pattern.reshape(50,50) 
+    return matrix
+
+def matrix_list(history): 
+    liste = []
+    for i in range (history.shape[0]): 
+        liste.append(vector_to_matrix(history[i]))
+    return liste
+
+def save_video(state_list, out_path) : #NB : state_list est la liste renvoyée par la fct précédente  
+    liste=[]
+    for i in range (state_list.shape[0]) : 
+        liste.append(plt.imshow(state_list[i], cmap='gray'))
+    out_path=plt.ArtistAnimation(liste)
+    return out_path
+
+
+
+
+
+
+
