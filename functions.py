@@ -96,7 +96,7 @@ def hebbian_weights(patterns):
     """
 
     W=np.zeros((patterns.shape[1],patterns.shape[1]))
-    for i in range (patterns.shape[0]):
+    for i in range (patterns.shape[1]):
         for j in range(patterns.shape[1]):
             if i==j : 
                 W[i][j]=0
@@ -117,7 +117,6 @@ def update(state, weights):
     --------------
     state : 1 dimensional numpy array state (pattern state updtated)
     """
-
     for i in range (state.shape[0]) : 
         for j in range (weights.shape[1]) : 
             if state[i] * weights[i][j] >= 0 :
@@ -163,9 +162,12 @@ def dynamics(state, weights, max_iter):
     """
 
     T=1
+    s=state.copy() 
     u=update(state, weights)
+    u=update(u, weights)
     history = [u]
-    while (state.all() != u.all()) and (T < max_iter) : 
+    
+    while ((s!= u).any()) and (T < max_iter) :
         u=update(u, weights)
         history.append(u)
         T += 1
@@ -218,7 +220,7 @@ def storkey_weights(patterns):
     W = np.zeros((pattern_size,num_patterns))
     W_prev =  W #premier w que de 0
     H=np.array((num_patterns, num_patterns))
-    for u in range (num_patterns): #numero du pattern 
+    for u in range (num_patterns): #nombre de patterns 
         for i in range (1,num_patterns):
             for j in range (num_patterns):
 
@@ -229,3 +231,35 @@ def storkey_weights(patterns):
                 W[i][j]=W_prev[i][j]+(patterns[u][i]*patterns[u][j]-patterns[u][i]*H[j][i]-patterns[u][j]*H[i][j])/num_patterns            
         W_prev=W #actualisation de "l'ancienne matrice" 
     return W
+
+
+
+def energy(state, weights) :
+    """Function that calculates the energy 
+    """
+    E=0
+    for i in range ():
+        for j in range (): 
+            E+= weights[i][j]*state[i]* state [j]
+    return -1/2*E 
+
+# the update function does not function. do we need to do a deepcopy of state ? we are lost
+
+def generate_checkerboard():
+    axis_x = np.ones(50)
+    counter = 0
+    i=5
+    while (i<50) : 
+        axis_x[i]*=-1
+        counter+=1
+        if (counter==5): 
+            i+=5
+            counter=0
+        i+=1
+    print ("x:", axis_x)
+    axis_y=axis_x.reshape(50,1)
+    print ("y:", axis_y)
+    checkboard = axis_y*axis_x
+    print (checkboard)
+    print (checkboard.shape[0], checkboard.shape[1])
+    return checkboard
