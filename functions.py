@@ -205,7 +205,6 @@ def dynamics_async(state, weights, max_iter, convergence_num_iter):
     return history
 
 def storkey_weights(patterns):
-
     """Apply the Storkey learning rule for some patterns to create the weight matrix
     Parameters :
     -----------------
@@ -236,7 +235,15 @@ def storkey_weights(patterns):
 
 
 def energy(state, weights) :
-    """Function that calculates the energy 
+    """Function that calculates the energy associated to the given pattern
+    Parameters :
+    -----------------
+    state : 2 dimensional numpy array 
+    weights : 2 dimensional numpy array (weight matrix)
+
+    Return :
+    --------------
+    E : float or int
     """
     E=0
     for i in range ():
@@ -247,6 +254,14 @@ def energy(state, weights) :
 # the update function does not function. do we need to do a deepcopy of state ? we are lost
 
 def generate_initial_checkerboard():
+    """Function creating a initial checkerboard with alternate black and white boxes.
+    Parameters :
+    -----------------
+    None
+    Return :
+    --------------
+    checkerboard : 2 D numpy array matrix 
+    """
     axis_x = np.ones(50)
     counter = 0
     i=5
@@ -266,22 +281,55 @@ def generate_initial_checkerboard():
     return checkboard
 
 def flatten_checkerboard(checkerboard):
-    flatten_checkerboard = checkerboard.reshape(1,2500)
-    return flatten_checkerboard 
+    """Function reshaping a 2D matrix into a 1D array.
+    Parameters :
+    -----------------
+    checkerboard : 2D numpy array matrix
+    Return :
+    --------------
+    flattened_checkerboard : 1D numpy array  
+    """
+    flattened_checkerboard = checkerboard.reshape(1,2500)
+    return flattened_checkerboard 
 
 def vector_to_matrix(pattern):
+    """Function reshaping a vector (1D) into a  2D array.
+    Parameters :
+    -----------------
+    pattern : (1D) numpy array 
+    Return :
+    --------------
+    matrix : 2D numpy array  
+    """
     matrix = pattern.reshape(50,50) 
     return matrix
 
 def matrix_list(history): 
-    liste = []
+    """Function adding the given pattern to a list containing multiple patterns.
+    Parameters :
+    -----------------
+    history : (1D) numpy array  
+    Return : 
+    --------------
+    m_list : 2D numpy array (containing multiple patterns)
+    """
+    m_list = []
     for i in range (history.shape[0]): 
-        liste.append(vector_to_matrix(history[i]))
-    return liste
+        m_list.append(vector_to_matrix(history[i]))
+    return m_list
 
 def save_video(state_list, out_path) : #NB : state_list est la liste renvoyée par la fct précédente  
+    """Function generating a video from a sequence of patterns. takes a photo every XX perturbations
+    Parameters :
+    -----------------
+    state_list : 2D numpy array (list of patterns) 
+    out_path : video ?????
+    Return : 
+    --------------
+    out_path : video ??????
+    """    
     liste=[]
-    for i in range (state_list.shape[0]) : 
+    for i in range (state_list.shape[0]) : #on devra le changer pour iterer seulement toutes les X_X_X modifications
         liste.append(plt.imshow(state_list[i], cmap='gray'))
     out_path=plt.ArtistAnimation(liste)
     return out_path
