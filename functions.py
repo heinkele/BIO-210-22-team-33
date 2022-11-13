@@ -66,6 +66,35 @@ def perturb_pattern(pattern, num_perturb):
 
     return p_0 
 
+def perturb_pattern2 (pattern, num_perturb):
+
+    """Pertube a given pattern
+    Parameters :
+    -----------------
+    pattern : 1 dimensional numpy array (a binary pattern)
+    num_perturb : int
+
+    Return :
+    --------------
+    1 dimensional numpy array p_0 (perturbed pattern)
+    """
+
+    a = np.random.randint(len(pattern))
+    list_coord = [a]
+
+    for i in range (num_perturb+1) :
+        b = np.random.randint(len(pattern))
+        while b == a :
+            b = np.random.randint(len(pattern))
+        list_coord.append(b)
+
+    p_0 = pattern
+    for k in range (len(list_coord)):
+        p_0[list_coord[k]]*=-1
+
+    return p_0
+
+
 def pattern_match(memorized_patterns, pattern):
 
     """Match a pattern with the corresponding memorized one (see if there is a match and where)
@@ -118,13 +147,31 @@ def update(state, weights):
     --------------
     state : 1 dimensional numpy array state (pattern state updtated)
     """
-    for i in range (state.shape[0]) : 
-        for j in range (weights.shape[1]) : 
-            if state[i] * weights[i][j] >= 0 :
-                state[i] = 1
+
+    for i in range (weights.shape[0]) :
+        for j in range (weights.shape[1]): 
+            state[i] = state[j]*weights[j][i]
+        for k in range (len(state)):
+            if state[k] < 0:
+                state[k] = -1
             else :
-                state[i] = -1
+                state[k] = 1
+        print(state)
+         
     return state
+
+def update2(state, weights):
+    weight=weights[2]
+    print("weight : ", weight)
+    state = weight*state
+    for k in range (len(state)):
+        if state[k] < 0:
+            state[k] = -1
+        else :
+            state[k] = 1
+    print ("update 2 : ", state)
+    return state
+
 
 def update_async(state, weights):
 
@@ -162,16 +209,21 @@ def dynamics(state, weights, max_iter):
     history : a list with the whole state history. (list of 1 dimensional numpy array)
     """
 
-    T=1
-    s=state.copy() 
-    u=update(state, weights)
-    u=update(u, weights)
+    T=1 
+    u=update2(state, weights)
     history = [u]
+    v=update2(u, weights)
+    history.append(v) 
+    print ("u : ", u)
+    print("v : ", v)
     
-    while ((s!= u).any()) and (T < max_iter) :
-        u=update(u, weights)
-        history.append(u)
+    while (not(np.array_equal(history[len(history)-1],history[len(history)-2])) and (T < max_iter)) :
+        v=update2(v, weights)
+        history.append(v)
         T += 1
+        print(T)
+        print("v : ", v)
+    
     return history
 
 def dynamics_async(state, weights, max_iter, convergence_num_iter):
@@ -217,19 +269,20 @@ def storkey_weights(patterns):
 
     num_patterns = patterns.shape[0]
     pattern_size = patterns.shape[1]
-    W = np.zeros((pattern_size,num_patterns))
+    W = np.zeros((pattern_size,pattern_size))
     W_prev =  W #premier w que de 0
-    H=np.array((num_patterns, num_patterns))
+    H=np.zeros((pattern_size, pattern_size))
     for u in range (num_patterns): #nombre de patterns 
-        for i in range (1,num_patterns):
-            for j in range (num_patterns):
+        for i in range (pattern_size):
+            for j in range (pattern_size):
 
-                for k in range (patterns.shape[1]):#code matrix H 
+                for k in range (pattern_size):#code matrix H 
                     if (k!=i and k!=j):
                         H[i][j]+= W_prev[i][k]*patterns[u][k]
     
                 W[i][j]=W_prev[i][j]+(patterns[u][i]*patterns[u][j]-patterns[u][i]*H[j][i]-patterns[u][j]*H[i][j])/num_patterns            
         W_prev=W #actualisation de "l'ancienne matrice" 
+    print(W)
     return W
 
 
