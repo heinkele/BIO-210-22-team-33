@@ -4,9 +4,11 @@ import functions as f
 memorized_patterns = f.generate_patterns(3,10)
 
 print("memorized pattern :", memorized_patterns[2])
+print (memorized_patterns[2].shape)
 
 # our chosen pattern is the 2nd line
-perturbed_pattern = f.perturb_pattern2(memorized_patterns[2],4)
+
+perturbed_pattern = f.perturb_pattern(memorized_patterns[2],4)
 
 print ("perturb pattern :", perturbed_pattern)
 
@@ -29,7 +31,7 @@ W = f.storkey_weights(memorized_patterns)
 
 
 
-f.generate_checkerboard()
+f.generate_initia_checkerboard()
 
 memorized_patterns = f.generate_patterns(100,2500)
 memorized_patterns[2] = f.flatten_checkerboard(f.generate_initial_checkerboard())
