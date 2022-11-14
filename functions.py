@@ -2,6 +2,7 @@ from sre_parse import State
 import numpy as np 
 import  matplotlib.pyplot as plt 
 
+
 def generate_patterns(num_patterns, pattern_size):
 
     """Generate the patterns to memorize
@@ -23,14 +24,7 @@ def generate_patterns(num_patterns, pattern_size):
             b[i][j]+=[np.random.choice(my_list)]
     return b
 
-def generate_coord(pattern_size):
-
-    """Generate a random number which represent the coordonnate of the element we want to reach in the pattern"""
-
-    x=np.random.randint(pattern_size)
-    return x
-
-def perturb_pattern(pattern, num_perturb):
+def perturb_pattern (pattern, num_perturb):
 
     """Pertube a given pattern
     Parameters :
@@ -43,56 +37,13 @@ def perturb_pattern(pattern, num_perturb):
     1 dimensional numpy array p_0 (perturbed pattern)
     """
 
-    list_coord=[generate_coord(pattern.shape)]
-    for i in range (1,num_perturb):
-        counter = 0
-        new_coord=generate_coord(pattern.shape)
-        for k in range (i-1):
-            if list_coord[k]!=new_coord :
-                counter+=1
-                if counter==i-1 :
-                    break 
-            else :
-                new_coord=generate_coord(pattern.shape)
-                k=-1 #on recommence le test d'egalite de 0 (k sera incremente au debut de la boucle for et vaudra donc 0)
-                counter=0
-            k+=1
-        list_coord.append(new_coord)
-        i+=1
-    
+    a = np.random.choice(len(pattern), num_perturb, replace=False)
+
     p_0 = pattern
     for i in range (num_perturb):
-        p_0[list_coord[i]]*=-1
+        p_0[a[i]]*=-1
 
     return p_0 
-
-def perturb_pattern2 (pattern, num_perturb):
-
-    """Pertube a given pattern
-    Parameters :
-    -----------------
-    pattern : 1 dimensional numpy array (a binary pattern)
-    num_perturb : int
-
-    Return :
-    --------------
-    1 dimensional numpy array p_0 (perturbed pattern)
-    """
-
-    a = np.random.randint(len(pattern))
-    list_coord = [a]
-
-    for i in range (num_perturb+1) :
-        b = np.random.randint(len(pattern))
-        while b == a :
-            b = np.random.randint(len(pattern))
-        list_coord.append(b)
-
-    p_0 = pattern
-    for k in range (len(list_coord)):
-        p_0[list_coord[k]]*=-1
-
-    return p_0
 
 
 def pattern_match(memorized_patterns, pattern):
@@ -125,17 +76,17 @@ def hebbian_weights(patterns):
     W : 2 dimensional numpy array p_0 (weight matrix)
     """
 
-    W=np.zeros((patterns.shape[1],patterns.shape[1]))
-    for i in range (patterns.shape[1]):
-        for j in range(patterns.shape[1]):
+    W=np.zeros((np.shape(patterns)[1],np.shape(patterns)[1]))
+    for i in range (np.shape(patterns)[1]):
+        for j in range(np.shape(patterns)[1]):
             if i==j : 
                 W[i][j]=0
             else :
-                for k in range (patterns.shape[0]):
-                    W[i][j]+=(1/patterns.shape[0])*patterns[k][i]*patterns[k][j]
+                for k in range (np.shape(patterns)[0]):
+                    W[i][j]+=(1/np.shape(patterns)[0])*patterns[k][i]*patterns[k][j]
     return W
 
-def update(state, weights):
+def update2(state, weights):
 
     """Apply the update rule to a state pattern.
     Parameters :
@@ -148,29 +99,15 @@ def update(state, weights):
     state : 1 dimensional numpy array state (pattern state updtated)
     """
 
-    for i in range (weights.shape[0]) :
-        for j in range (weights.shape[1]): 
-            state[i] = state[j]*weights[j][i]
-        for k in range (len(state)):
-            if state[k] < 0:
-                state[k] = -1
-            else :
-                state[k] = 1
-        print(state)
-         
-    return state
-
-def update2(state, weights):
-    weight=weights[2]
-    print("weight : ", weight)
-    state = weight*state
-    for k in range (len(state)):
-        if state[k] < 0:
-            state[k] = -1
+    new_state = np.dot(weights, state)
+    print("new_state : ", new_state)
+    for k in range (len(new_state)):
+        if new_state[k] < 0:
+            new_state[k] = -1
         else :
-            state[k] = 1
-    print ("update 2 : ", state)
-    return state
+            new_state[k] = 1
+    print ("update 2 : ", new_state)
+    return new_state
 
 
 def update_async(state, weights):
@@ -186,8 +123,8 @@ def update_async(state, weights):
     state : 1 dimensional numpy array state (pattern state with the i-th component updtated)
     """
 
-    i = np.random.randint(0, state.shape[0])
-    for j in range (weights.shape[1]):
+    i = np.random.randint(0, np.shape(state)[0])
+    for j in range (np.shape(weights)[1]):
         if state[i]* weights[i][j] >= 0 :
             state[i] = 1
         else :
@@ -267,8 +204,8 @@ def storkey_weights(patterns):
     W : 2 dimensional numpy array (weigth matrix)
     """
 
-    num_patterns = patterns.shape[0]
-    pattern_size = patterns.shape[1]
+    num_patterns = np.shape(patterns)[0]
+    pattern_size = np.shape(patterns)[1]
     W = np.zeros((pattern_size,pattern_size))
     W_prev =  W #premier w que de 0
     H=np.zeros((pattern_size, pattern_size))
