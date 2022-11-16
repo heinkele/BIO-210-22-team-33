@@ -1,6 +1,7 @@
 import functions as f
 import numpy as np
 
+
 def test_generate_patterns ():
     # generic values
     M = f.generate_patterns(3,4)
@@ -13,23 +14,31 @@ def test_perturb_pattern():
     # generic values
     t = list(f.perturb_pattern(np.ones(50),20))
     assert t.count(-1) == 20
+    assert all(m in t for m in [1, -1]) #value tests
     # exceptions treated in doctests
+
+
+
+def test_hebbian_weights():
+    assert np.allclose(f.hebbian_weights([[1, 1, -1, -1], [1, 1, -1, 1], [-1, 1, -1, 1]]), ([[0, 1/3, -1/3, -1/3], [1/3, 0, -1, 1/3], [-1/3, -1, 0, -1/3], [-1/3, 1/3, -1/3, 0]]))
 
 """ 
 def test_pattern_match():
     hahj
 
-def test_hebbian_weights():
-    assert np.allclose(f.hebbian_weights([[1, 1, -1, -1], [1, 1, -1, 1], [-1, 1, -1, 1]]), ([[0, 1/3, -1/3, -1/3], [1/3, 0, -1, 1/3], [-1/3, -1, 0, -1/3], [-1/3, 1/3, -1/3, 0]]))
+"""
 
-def test_update2():
-    hahj
-
-def test_update_async():
-    hahj
+def test_update():
+    assert np.allclose(f.update(np.array([[0, 1/3, -1/3, -1/3], [1/3, 0, -1, 1/3], [-1/3, -1, 0, -1/3], [-1/3, 1/3, -1/3, 0]]), ([-1, 1, -1, 1])), ([1, 1, -1, 1]))
 
 def test_dynamics():
-    hahj
+    assert np.allclose(f.dynamics(([-1, 1, -1, 1]), [[0, 1/3, -1/3, -1/3], [1/3, 0, -1, 1/3], [-1/3, -1, 0, -1/3], [-1/3, 1/3, -1/3, 0]], 20), [[1, 1, -1, 1], [1, 1, -1, 1]])
+    
+    
+
+"""
+
+def test_update_async():
 
 def test_dynamics_async():
     hahj
