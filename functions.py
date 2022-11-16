@@ -1,10 +1,8 @@
-from sre_parse import State
 import numpy as np 
 import  matplotlib.pyplot as plt 
 
 
 def generate_patterns(num_patterns, pattern_size):
-
     """Generate the patterns to memorize
     Parameters :
     -----------------
@@ -15,7 +13,16 @@ def generate_patterns(num_patterns, pattern_size):
     --------------
     Two dimensional numpy array b
     Each row of b is a random pattern of {1, -1} (num_patterns rows of pattern_size columns)
+
+    Exceptions :
+    --------------
+    >> generate_patterns(0,2)               #add 1 more > so that it works
+    Traceback (most recent call last):
+    ...
+    ValueError: num_patterns must be > 0
     """
+    integer_tests(num_patterns)
+    integer_tests(pattern_size)
 
     my_list =[-1,1]
     b=np.zeros((num_patterns,pattern_size))
@@ -35,7 +42,17 @@ def perturb_pattern (pattern, num_perturb):
     Return :
     --------------
     1 dimensional numpy array p_0 (perturbed pattern)
+
+    Exceptions :
+    --------------
+    >> perturb_pattern(np.array[1,1,-1],4)
+    Traceback (most recent call last):
+    ...
+    ValueError : pattern.size must be superior to num_perturb
     """
+    integer_tests(num_perturb)
+    vector_tests(pattern, num_perturb)
+    list_element_tests(pattern)
 
     a = np.random.choice(len(pattern), num_perturb, replace=False)
 
@@ -326,7 +343,22 @@ def save_video(state_list, out_path) : #NB : state_list est la liste renvoyée p
 
 
 
+"""--------------------------------------- ARGUMENT TESTS -------------------------------------------------"""
+def integer_tests(arg):
+    import math
+    if math.floor(arg) != arg:
+        raise ValueError(arg, "must be an integer")
+    if arg <= 0 :
+        raise ValueError(arg, "must > 0")
+    if arg+1 == arg :
+        raise OverflowError(arg, "too large")
 
+def vector_tests(arg, max_size = None):
+    if not isinstance(arg, np.ndarray):
+        raise TypeError("Inappropriate type :", arg, "must be a np.ndarray")
+    if (arg.size < max_size):
+        raise ValueError(arg, "must be superior to", max_size)
 
-
-
+def list_element_tests(pattern, possible_values = [1, -1]):
+    if (not all(m in pattern for m in possible_values)):
+        raise ValueError(pattern, "should only contain values in", possible_values)
