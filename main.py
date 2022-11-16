@@ -1,26 +1,27 @@
 import numpy as np
 import functions as f
 
-memorized_patterns = f.generate_patterns(0,10)
-"""
+memorized_patterns = f.generate_patterns(3,4)
+
 print("memorized pattern :", memorized_patterns[2])
-print (memorized_patterns[2].shape)
 
 # our chosen pattern is the 2nd line
 
-perturbed_pattern = f.perturb_pattern(memorized_patterns[2],4)
+perturbed_pattern = f.perturb_pattern(memorized_patterns[2],2)
 
 print ("perturb pattern :", perturbed_pattern)
 
 
 
 W = f.hebbian_weights(memorized_patterns)
+print ("W :", W)
 
 
 dynamic_test = f.dynamics(perturbed_pattern,W,20)
 if ((dynamic_test==memorized_patterns[2]).all()):
     print ("Vous etes trop forts")
 
+"""
 async_dynamic_test = f.dynamics_async(perturbed_pattern,W,20000,3000)
 if ((async_dynamic_test==memorized_patterns[2]).all()):
     print ("Vous etes trop forts")
@@ -45,5 +46,4 @@ if ((dynamic_test==memorized_patterns[2]).all()):
 async_dynamic_test = f.dynamics_async(perturbed_pattern,W,20000,3000)
 if ((async_dynamic_test==memorized_patterns[2]).all()):
     print ("Vous etes trop forts")
-    
 """
