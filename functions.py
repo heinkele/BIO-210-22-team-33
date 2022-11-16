@@ -52,7 +52,6 @@ def perturb_pattern (pattern, num_perturb):
     """
     integer_tests(num_perturb)
     vector_tests(pattern, num_perturb)
-    list_element_tests(pattern)
 
     a = np.random.choice(len(pattern), num_perturb, replace=False)
 
@@ -91,7 +90,15 @@ def hebbian_weights(patterns):
     Return :
     --------------
     W : 2 dimensional numpy array p_0 (weight matrix)
+
+    Exceptions :
+    --------------
+    >> hebbian_weights(np.array([[1,1,-1], [2, 1, -1]]))
+    Traceback (most recent call last):
+    ...
+    ValueError : elements of patterns must be 1 or -1
     """
+
 
     W=np.zeros((np.shape(patterns)[1],np.shape(patterns)[1]))
     for i in range (np.shape(patterns)[1]):
@@ -103,7 +110,7 @@ def hebbian_weights(patterns):
                     W[i][j]+=(1/np.shape(patterns)[0])*patterns[k][i]*patterns[k][j]
     return W
 
-def update2(state, weights):
+def update(state, weights):
 
     """Apply the update rule to a state pattern.
     Parameters :
@@ -123,7 +130,7 @@ def update2(state, weights):
             new_state[k] = -1
         else :
             new_state[k] = 1
-    print ("update 2 : ", new_state)
+    print ("update  : ", new_state)
     return new_state
 
 
@@ -163,21 +170,22 @@ def dynamics(state, weights, max_iter):
     history : a list with the whole state history. (list of 1 dimensional numpy array)
     """
 
-    T=1 
-    u=update2(state, weights)
-    history = [u]
-    v=update2(u, weights)
-    history.append(v) 
+    T=2
+    u=update(state, weights)
     print ("u : ", u)
+    history = [u]
+    v=update(u, weights)
     print("v : ", v)
+    history.append(v) 
     
     while (not(np.array_equal(history[len(history)-1],history[len(history)-2])) and (T < max_iter)) :
-        v=update2(v, weights)
+        v=update(v, weights)
         history.append(v)
         T += 1
         print(T)
         print("v : ", v)
     
+    print("history : ", history)
     return history
 
 def dynamics_async(state, weights, max_iter, convergence_num_iter):
@@ -362,3 +370,5 @@ def vector_tests(arg, max_size = None):
 def list_element_tests(pattern, possible_values = [1, -1]):
     if (not all(m in pattern for m in possible_values)):
         raise ValueError(pattern, "should only contain values in", possible_values)
+
+
