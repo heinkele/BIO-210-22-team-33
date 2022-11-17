@@ -61,23 +61,34 @@ def perturb_pattern (pattern, num_perturb):
 
     return p_0 
 
+def pattern_match(memorized_patterns, pattern): #problème : considère memorized patterns comme une liste au lie dun ndarray
 
-def pattern_match(memorized_patterns, pattern):
-
-    """Match a pattern with the corresponding memorized one (see if there is a match and where)
+    """
+    Match a pattern with the corresponding memorized one (see if there is a match and where)
     Parameters :
     -----------------
-    memorized_paterns : 2 dimensional numpy array (Matrix of the initialized memorized patterns, obtained with generate_patterns)
+    memorized_patterns : 2 dimensional numpy array (Matrix of the initialized memorized patterns, obtained with generate_patterns)
     pattern : 1 dimensional numpy array (pattern of intersest)
 
     Return :
     --------------
     None : no match
     l : the index of the row corresponding to the matching pattern. (int)
-    """
 
+    Exceptions :
+    --------------
+    >>pattern_match([[1,-1],[1,2]])
+    Traceback (most recent call last):
+    ...
+    ValueError : pattern should only contain values in [-1,1]
+    """
+    matrix_element_tests(memorized_patterns)
+    list_element_tests(pattern)
+    vector_tests(pattern)
+    vector_tests(memorized_patterns)
+    
     for l in range(memorized_patterns.shape[0]):
-        if (pattern == memorized_patterns[l]):
+        if ((pattern == memorized_patterns[l]).all()):
             return l
 
 def hebbian_weights(patterns):
@@ -98,7 +109,7 @@ def hebbian_weights(patterns):
     ...
     ValueError : elements of patterns must be 1 or -1
     """
-
+    #matrix_element_tests(patterns)
 
     W=np.zeros((np.shape(patterns)[1],np.shape(patterns)[1]))
     for i in range (np.shape(patterns)[1]):
@@ -132,7 +143,6 @@ def update(state, weights):
             new_state[k] = 1
     print ("update  : ", new_state)
     return new_state
-
 
 def update_async(state, weights):
 
@@ -247,8 +257,6 @@ def storkey_weights(patterns):
     print(W)
     return W
 
-
-
 def energy(state, weights) :
     """Function that calculates the energy associated to the given pattern
     Parameters :
@@ -266,9 +274,7 @@ def energy(state, weights) :
             E+= weights[i][j]*state[i]* state [j]
     return -1/2*E 
 
-# the update function does not function. do we need to do a deepcopy of state ? we are lost
-
-def generate_initial_checkerboard():
+def generate_initial_checkerboard(): 
     """Function creating a initial checkerboard with alternate black and white boxes.
     Parameters :
     -----------------
@@ -292,7 +298,6 @@ def generate_initial_checkerboard():
     print ("y:", axis_y)
     checkboard = axis_y*axis_x
     print (checkboard)
-    print (checkboard.shape[0], checkboard.shape[1])
     return checkboard
 
 def flatten_checkerboard(checkerboard):
@@ -319,19 +324,28 @@ def vector_to_matrix(pattern):
     matrix = pattern.reshape(50,50) 
     return matrix
 
-def matrix_list(history): 
+def matrix_list(history): # problème de taille/type rien ne va : a l'aide !!
     """Function adding the given pattern to a list containing multiple patterns.
     Parameters :
     -----------------
-    history : (1D) numpy array  
+    history : (1D) list containing 1D numpy arrays  
+
     Return : 
     --------------
-    m_list : 2D numpy array (containing multiple patterns)
+    m_list : list of 2D numpy arrays (containing multiple patterns)
+
+    Exceptions :
+    -------------
+    >> 
+    Traceback (most recent call last):
+    ...
+    ValueError: pattern should only contain values in [-1,1]
     """
+
     m_list = []
-    for i in range (history.shape[0]): 
+    for i in range (len(history)): 
         m_list.append(vector_to_matrix(history[i]))
-    return m_list
+    return m_list 
 
 def save_video(state_list, out_path) : #NB : state_list est la liste renvoyée par la fct précédente  
     """Function generating a video from a sequence of patterns. takes a photo every XX perturbations
@@ -348,7 +362,6 @@ def save_video(state_list, out_path) : #NB : state_list est la liste renvoyée p
         liste.append(plt.imshow(state_list[i], cmap='gray'))
     out_path=plt.ArtistAnimation(liste)
     return out_path
-
 
 
 """--------------------------------------- ARGUMENT TESTS -------------------------------------------------"""
@@ -371,4 +384,10 @@ def list_element_tests(pattern, possible_values = [1, -1]):
     if (not all(m in pattern for m in possible_values)):
         raise ValueError(pattern, "should only contain values in", possible_values)
 
+def matrix_element_tests(patterns, possible_values = [1, -1]):
+    for pattern_nb in range (patterns.shape[0]):
+        list_element_tests(patterns[pattern_nb], possible_values= [1,-1])
 
+def list_2D_element_tests(patterns, possible_values = [1, -1]):
+    for pattern_nb in range (len(patterns)):
+        list_element_tests(patterns[pattern_nb], possible_values= [1,-1])
