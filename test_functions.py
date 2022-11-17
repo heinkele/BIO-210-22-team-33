@@ -53,24 +53,45 @@ def test_update_async():
 def test_dynamics_async():
     hahj
 
-"""
-"""
+
+
 --------------------------- SALOME -------------------------------
+"""
 def test_storkey_weights():
+    #generic values 
     assert np.allclose(f.storkey_weights([[1, 1, -1, -1], [1, 1, -1, 1], [-1, 1, -1, 1]]), ([[1.125, 0.25, -0.25, -0.5], [0.25, 0.625, -1, 0.25], [-0.25, -1, 0.625, -0.25], [-0.5, 0.25, -0.25, 1.125]]))
+    memorized_patterns = f.generate_patterns(3,4)
+    storkey_weight = f.storkey_weights(memorized_patterns)
+    assert np.shape(storkey_weight)[0] == 4 #size tests   
+    assert np.shape(storkey_weight)[0] == np.shape(storkey_weight)[1]
 
 def test_energy():
-    hahj
+    memorized_patterns = f.generate_patterns(3,4)
+    energy = f.energy(memorized_patterns)
+    update_pattern = []
+    for i in range (100): #tests that the energy matrix is non increasing  
+        update_pattern = f.update(memorized_patterns, f.hebbian_weights(memorized_patterns))
+        i+=1
+    assert energy==f.energy(update_pattern) 
 
 def test_flatten_checkerboard():
-    hahj
+    checkboard = f.generate_patterns(6,8)
+    flatten_checkboard = f.flatten_checkerboard(checkboard)
+    assert np.shape(flatten_checkboard)[0] == np.shape(checkboard)[0]* np.shape(checkboard)[1]
+    assert np.shape(flatten_checkboard)[1] == 1 
 
 def test_vector_to_matrix():
-    hahj
+    pattern = f.generate_patterns(1,2500)
+    matrix = f.vector_to_matrix(pattern)
+    assert np.shape(pattern)[1] == np.shape(matrix)[0] * np.shape(matrix)[1]
+    assert np.shape(matrix)[0]==50
+    assert np.shape(matrix)[0] == np.shape(matrix)[1]
+    
 
+"""""
 -------------------------- MISCHA -------------------------------
-"""
-"""
+
+
 def test_generate_initial_checkerboard():
     checkerboard = f.generate_initial_checkerboard()
     f.matrix_element_tests(checkerboard)
