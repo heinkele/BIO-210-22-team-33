@@ -1,5 +1,6 @@
 import numpy as np 
 import  matplotlib.pyplot as plt 
+import matplotlib.animation as anim
 
 
 def generate_patterns(num_patterns, pattern_size):
@@ -180,7 +181,7 @@ def dynamics(state, weights, max_iter):
     history : a list with the whole state history. (list of 1 dimensional numpy array)
     """
 
-    T=2
+    t=2
     u=update(state, weights)
     print ("u : ", u)
     history = [u]
@@ -188,11 +189,11 @@ def dynamics(state, weights, max_iter):
     print("v : ", v)
     history.append(v) 
     
-    while (not(np.array_equal(history[len(history)-1],history[len(history)-2])) and (T < max_iter)) :
+    while (not(np.array_equal(history[len(history)-1],history[len(history)-2])) and (t < max_iter)) :
         v=update(v, weights)
         history.append(v)
-        T += 1
-        print(T)
+        t += 1
+        print(t)
         print("v : ", v)
     
     print("history : ", history)
@@ -214,11 +215,11 @@ def dynamics_async(state, weights, max_iter, convergence_num_iter):
     history : a list with the whole state history. (list of 1 dimensional numpy array)
     """
 
-    T = 1
+    t = 1
     u = update_async(state, weights)
     history = [u]
-    rep = 0
-    while (rep!=convergence_num_iter) and (T < max_iter):
+    rep = 0 #counter that increases if the pattern doesn't change (to see if we reach convergence_num_iter)
+    while (rep!=convergence_num_iter) and (t < max_iter):
         v=u 
         u = update_async(u, weights)
         if ((v == u).all()):
@@ -226,6 +227,7 @@ def dynamics_async(state, weights, max_iter, convergence_num_iter):
         else :
             rep=0
         history.append(u)
+        t+=1
     return history
 
 def storkey_weights(patterns):
@@ -291,16 +293,16 @@ def energy(state, weights) :
 
     Return :
     --------------
-    E : float or int
+    e : float or int : energy of the network 
     """
-    E=0
+    e=0
     for i in range (np.shape(weights)[0]):
         for j in range (np.shape(weights)[1]): 
-            E+= weights[i][j]*state[i]* state [j]
-    return -1/2*E 
+            e+= weights[i][j]*state[i]* state [j]
+    return -1/2*e
 
 def generate_initial_checkerboard(): 
-    """Function creating a initial checkerboard with alternate black and white boxes.
+    """Function creating a initial checkerboard with alternate black and white boxes : A 50x50 checkerboard with 5x5 checkers
     Parameters :
     -----------------
     None
@@ -310,18 +312,16 @@ def generate_initial_checkerboard():
     """
     axis_x = np.ones(50)
     counter = 0
-    i=5
+    i=5 # we iterate every 5 values to create 5x5 checkers 
     while (i<50) : 
         axis_x[i]*=-1
         counter+=1
-        if (counter==5): 
+        if (counter==5): # we iterate every 5 values to create 5x5 checkers 
             i+=5
             counter=0
         i+=1
-    print ("x:", axis_x)
-    axis_y=axis_x.reshape(50,1)
-    print ("y:", axis_y)
-    checkboard = axis_y*axis_x
+    axis_y=axis_x.reshape(50,1) #we use the diagnal symetry of the checkboard 
+    checkboard = axis_y*axis_x #WWWWW
     print (checkboard)
     return checkboard
 
@@ -377,25 +377,25 @@ def save_video(state_list, out_path) : #NB : state_list est la liste renvoyée p
     Parameters :
     -----------------
     state_list : 2D numpy array (list of patterns) 
-    out_path : video ?????
+    out_path : path saving the video, needs to be an argument to be accessible as long as we need the function 
     Return : 
     --------------
-    out_path : video ??????
+    out_path : path saving the video 
     """    
     liste=[]
     for i in range (state_list.shape[0]) : #on devra le changer pour iterer seulement toutes les X_X_X modifications
-        liste.append(plt.imshow(state_list[i], cmap='gray'))
-    out_path=plt.ArtistAnimation(liste)
+        liste.append(plt.imshow(state_list[i], cmap='gray')) #save a video of each of the experiments 
+    out_path=anim.ArtistAnimation(liste)
     return out_path
 
 
-    def plot_energy(history, weights,  step=1) : 
-        energydict={}
-        while i <= np.shape(history)[0] :
-            energydict[i] = f.energy(history[i], weights)
-            i += step
+def plot_energy(history, weights,  step=1) : 
+    energydict={}
+    while i <= np.shape(history)[0] :
+        energydict[i] = f.energy(history[i], weights)
+        i += step
 
-        return energydict
+    return energydict
 
 
 
