@@ -133,8 +133,8 @@ def update(state, weights):
     --------------
     state : 1 dimensional numpy array state (pattern state updtated)
     """
-
-    new_state = np.dot(weights, state)
+    copy_state = state.copy()
+    new_state = np.dot(weights, copy_state)
     print("new_state : ", new_state)
     for k in range (len(new_state)):
         if new_state[k] < 0:
@@ -239,22 +239,47 @@ def storkey_weights(patterns):
     W : 2 dimensional numpy array (weigth matrix)
     """
 
-    num_patterns = np.shape(patterns)[0]
-    pattern_size = np.shape(patterns)[1]
-    W = np.zeros((pattern_size,pattern_size))
-    W_prev =  W #premier w que de 0
-    H=np.zeros((pattern_size, pattern_size))
+    """"
     for u in range (num_patterns): #nombre de patterns 
-        for i in range (pattern_size):
+        for i in range (pattern_size):  
             for j in range (pattern_size):
 
                 for k in range (pattern_size):#code matrix H 
                     if (k!=i and k!=j):
                         H[i][j]+= W_prev[i][k]*patterns[u][k]
     
-                W[i][j]=W_prev[i][j]+(patterns[u][i]*patterns[u][j]-patterns[u][i]*H[j][i]-patterns[u][j]*H[i][j])/num_patterns            
+                W[i][j]=W_prev[i][j]+(patterns[u][i]*patterns[u][j]-patterns[u][i]*H[j][i]-patterns[u][j]*H[i][j])/num_patterns   
+
+        for i in range (pattern_size):#code matrix H
+            H += np.dot(W_prev[i], patterns[u])
+
+        W = W_prev + (np.outer(patterns[u], patterns[u]) - np.outer(patterns[u], H[u]) - np.outer(patterns[u], H[u]))/ num_patterns    
+
         W_prev=W #actualisation de "l'ancienne matrice" 
-    print(W)
+    """
+
+    num_patterns = np.shape(patterns)[0]
+    pattern_size = np.shape(patterns)[1]
+    W = np.zeros((pattern_size,pattern_size))
+    W_prev =  W #premier w que de 0
+    H=np.zeros((pattern_size, pattern_size))
+
+    for u in range (num_patterns) :
+        H += np.dot (W_prev, patterns[u])
+        np.reshape(H, (1, pattern_size*pattern_size))
+        case_i_eq_k = np.diag(W_prev)*patterns[u]
+        W_prev_diag_eq_0 = np.fill_diag(W_prev, 0)
+        case_j_eq_k = W_prev_diag_eq_0*patterns[u]
+        H -= case_i_eq_k
+        H -= case_j_eq_k
+        np.reshape(H, (pattern_size, pattern_size))
+
+        W = W_prev + (np.dot(patterns[u], patterns[u]) - np.outer(patterns[u], H) - np.outer(patterns[u], np.transpose(H)))
+
+    W_prev = W
+
+
+    print("stokey_rule :" , W)
     return W
 
 def energy(state, weights) :
@@ -269,8 +294,8 @@ def energy(state, weights) :
     E : float or int
     """
     E=0
-    for i in range ():
-        for j in range (): 
+    for i in range (np.shape(weights)[0]):
+        for j in range (np.shape(weights)[1]): 
             E+= weights[i][j]*state[i]* state [j]
     return -1/2*E 
 
@@ -362,6 +387,16 @@ def save_video(state_list, out_path) : #NB : state_list est la liste renvoyée p
         liste.append(plt.imshow(state_list[i], cmap='gray'))
     out_path=plt.ArtistAnimation(liste)
     return out_path
+
+
+    def plot_energy(history, weights,  step=1) : 
+        energydict={}
+        while i <= np.shape(history)[0] :
+            energydict[i] = f.energy(history[i], weights)
+            i += step
+
+        return energydict
+
 
 
 """--------------------------------------- ARGUMENT TESTS -------------------------------------------------"""
