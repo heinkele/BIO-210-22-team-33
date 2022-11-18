@@ -1,5 +1,5 @@
 import numpy as np 
-import  matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt 
 import matplotlib.animation as anim
 
 
@@ -366,7 +366,6 @@ def matrix_list(history): # problème de taille/type rien ne va : a l'aide !!
     ...
     ValueError: pattern should only contain values in [-1,1]
     """
-
     m_list = []
     for i in range (len(history)): 
         m_list.append(vector_to_matrix(history[i]))
@@ -394,7 +393,6 @@ def plot_energy(history, weights,  step=1) :
     while i <= np.shape(history)[0] :
         energydict[i] = f.energy(history[i], weights)
         i += step
-
     return energydict
 
 

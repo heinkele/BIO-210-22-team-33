@@ -1,5 +1,6 @@
 import numpy as np
 import functions as f
+import matplotlib.pyplot as plt
 
 
 memorized_patterns = f.generate_patterns(50, 2500)
@@ -8,13 +9,32 @@ perturbes_pattern = f.perturb_pattern(memorized_patterns[5], 1000)
 W_h = f.hebbian_weights(memorized_patterns)
 W_s = f.storkey_weights(memorized_patterns)
 
-"""
+
 history_h = f.dynamics(W_h, perturbes_pattern, 20)
 history_s = f.dynamics(W_s, perturbes_pattern, 20)
 history_async_h = f.dynamics_async(W_h, perturbes_pattern, 30000, 10000)
 history_async_s = f.dynamics_async(W_s, perturbes_pattern, 30000, 10000)
 
-"""
+#drawing of the 4 plots
+plt.figure
+
+plt.subplot(141) 
+plt.title('Hebbian weigths and update')
+plt.scatter(history_h)
+
+plt.subplot(142) 
+plt.title('Hebbian weigths and update_async')
+plt.scatter(history_async_h)
+
+plt.subplot(243)
+plt.title('Storkey weigths and update')
+plt.scatter(history_s)
+
+plt.subplot(244)
+plt.title('Storkey weigths and update_async')
+plt.scatter(history_async_s)
+
+plt.show()
 
 
 
