@@ -22,18 +22,14 @@ def generate_patterns(num_patterns, pattern_size):
     ...
     ValueError: num_patterns must be > 0
     """
-    integer_tests(num_patterns)
-    integer_tests(pattern_size)
-
     my_list =[-1,1]
     b=np.zeros((num_patterns,pattern_size))
-    for i in range (num_patterns):
-        for j in range (pattern_size):
+    for i in range(num_patterns):
+        for j in range(pattern_size):
             b[i][j]+=[np.random.choice(my_list)]
     return b
 
 def perturb_pattern (pattern, num_perturb):
-
     """Pertube a given pattern
     Parameters :
     -----------------
@@ -51,19 +47,15 @@ def perturb_pattern (pattern, num_perturb):
     ...
     ValueError : pattern.size must be superior to num_perturb
     """
-    integer_tests(num_perturb)
-    vector_tests(pattern, num_perturb)
-
     a = np.random.choice(len(pattern), num_perturb, replace=False)
-
-    p_0 = pattern
+    
+    p_0 = pattern.copy()
     for i in range (num_perturb):
         p_0[a[i]]*=-1
 
     return p_0 
 
 def pattern_match(memorized_patterns, pattern): #problème : considère memorized patterns comme une liste au lie dun ndarray
-
     """
     Match a pattern with the corresponding memorized one (see if there is a match and where)
     Parameters :
@@ -83,17 +75,11 @@ def pattern_match(memorized_patterns, pattern): #problème : considère memorize
     ...
     ValueError : pattern should only contain values in [-1,1]
     """
-    matrix_element_tests(memorized_patterns)
-    list_element_tests(pattern)
-    vector_tests(pattern)
-    vector_tests(memorized_patterns)
-    
     for l in range(memorized_patterns.shape[0]):
         if ((pattern == memorized_patterns[l]).all()):
             return l
 
 def hebbian_weights(patterns):
-
     """Apply the hebbian learning rule on some given patterns to create the weight matrix.
     Parameters :
     -----------------
@@ -110,18 +96,13 @@ def hebbian_weights(patterns):
     ...
     ValueError : elements of patterns must be 1 or -1
     """
-    #matrix_element_tests(patterns)
-
     W=np.zeros((np.shape(patterns)[1],np.shape(patterns)[1]))
     for u in range (np.shape(patterns)[0]):
         W += (1/np.shape(patterns)[0])*np.outer(patterns[u], patterns[u])
         np.fill_diagonal(W, 0)
-
-    print(W)
     return W
 
 def update(state, weights):
-
     """Apply the update rule to a state pattern.
     Parameters :
     -----------------
@@ -132,19 +113,15 @@ def update(state, weights):
     --------------
     state : 1 dimensional numpy array state (pattern state updtated)
     """
-    copy_state = state.copy()
-    new_state = np.dot(weights, copy_state)
-    print("new_state : ", new_state)
+    new_state = np.dot(weights, state)
     for k in range (len(new_state)):
         if new_state[k] < 0:
             new_state[k] = -1
         else :
             new_state[k] = 1
-    print ("update  : ", new_state)
     return new_state
 
 def update_async(state, weights):
-
     """Apply the asynchronous update rule to a state pattern (only for the i-th component of state)
     Parameters :
     -----------------
@@ -155,17 +132,17 @@ def update_async(state, weights):
     --------------
     state : 1 dimensional numpy array state (pattern state with the i-th component updtated)
     """
-
-    i = np.random.randint(0, np.shape(state)[0])
-    for j in range (np.shape(weights)[1]):
-        if state[i]* weights[i][j] >= 0 :
-            state[i] = 1
-        else :
-            state[i] = -1
-    return state
+    i = np.random.randint(len(state))
+    value = np.dot(state, weights[i])
+    new_state = state.copy()
+    #np.where(state[i])
+    if value >= 0 :
+        new_state[i] = 1
+    else :
+        new_state[i] = -1
+    return new_state
 
 def dynamics(state, weights, max_iter):
-
     """Run the dynamical system from an initial state until convergence or until a maximum number of steps is reached.
        Convergence is achieved when two consecutive updates return the same state.
     Parameters :
@@ -178,23 +155,18 @@ def dynamics(state, weights, max_iter):
     --------------
     history : a list with the whole state history. (list of 1 dimensional numpy array)
     """
-
-    t=2
-    u=update(state, weights)
-    print ("u : ", u)
-    history = [u]
-    v=update(u, weights)
-    print("v : ", v)
-    history.append(v) 
+    t=0
+    old_state = np.zeros(len(state))
+    history = [state] 
     
-    while (not(np.array_equal(history[len(history)-1],history[len(history)-2])) and (t < max_iter)) :
-        v=update(v, weights)
-        history.append(v)
+    while (state != old_state).any() and t < max_iter :
+        old_state = state
+        state=update(state, weights)
+        history.append(state)
         t += 1
-        print(t)
-        print("v : ", v)
-    
+
     print("history : ", history)
+    print(t)
     return history
 
 def dynamics_async(state, weights, max_iter, convergence_num_iter):
@@ -213,19 +185,20 @@ def dynamics_async(state, weights, max_iter, convergence_num_iter):
     history : a list with the whole state history. (list of 1 dimensional numpy array)
     """
 
-    t = 1
-    u = update_async(state, weights)
-    history = [u]
+    t = 0
     rep = 0 #counter that increases if the pattern doesn't change (to see if we reach convergence_num_iter)
+    history = [state]
     while (rep!=convergence_num_iter) and (t < max_iter):
-        v=u 
-        u = update_async(u, weights)
-        if ((v == u).all()):
+        old_state=state
+        state = update_async(state, weights)
+        if (state == old_state).all():
             rep+=1
         else :
             rep=0
-        history.append(u)
+        if t%1000 == 0:
+            history.append(state)
         t+=1
+    print(t)
     return history
 
 def storkey_weights(patterns):
@@ -265,26 +238,18 @@ def storkey_weights(patterns):
     H=np.zeros((pattern_size, pattern_size))
 
     for u in range (num_patterns) :
-        H += np.dot (W_prev, np.transpose(patterns[u]))
+        H += W_prev@patterns[u]
         np.reshape(H, (1, pattern_size*pattern_size))
         case_i_eq_k = np.diag(W_prev)*patterns[u]
         W_prev_diag_eq_0 = W_prev
         np.fill_diagonal(W_prev_diag_eq_0, 0)
         case_j_eq_k = W_prev_diag_eq_0*patterns[u]
-        H -= case_i_eq_k
-        H -= case_j_eq_k
+        H -= case_i_eq_k + case_j_eq_k
         np.reshape(H, (pattern_size, pattern_size))
-
-        W = W_prev + (1/num_patterns)*(np.outer(patterns[u], patterns[u]) - np.dot(patterns[u], H) - np.dot(patterns[u], np.transpose(H)))
+        W = W_prev + (1/num_patterns)*(np.outer(patterns[u], patterns[u]) - patterns[u] * H - np.transpose(patterns[u]*H))
         W_prev = W
-
-   
-
-
-    print("stokey_rule :" , W)
-    print ("H : ", H)
     return W
-
+  
 def energy(state, weights) :
     """Function that calculates the energy associated to the given pattern
     Parameters :
@@ -296,11 +261,7 @@ def energy(state, weights) :
     --------------
     e : float or int : energy of the network 
     """
-    e=0
-    for i in range (np.shape(weights)[0]):
-        for j in range (np.shape(weights)[1]): 
-            e+= weights[i][j]*state[i]* state [j]
-    return -1/2*e
+    return -(1/2)*np.sum(weights * np.outer(state,state))
 
 def generate_initial_checkerboard(): 
     """Function creating a initial checkerboard with alternate black and white boxes : A 50x50 checkerboard with 5x5 checkers
@@ -322,21 +283,8 @@ def generate_initial_checkerboard():
             counter=0
         i+=1
     axis_y=axis_x.reshape(50,1) #we use the diagnal symetry of the checkboard 
-    checkboard = axis_y*axis_x #WWWWW
-    print (checkboard)
+    checkboard = axis_y*axis_x 
     return checkboard
-
-def flatten_checkerboard(checkerboard):
-    """Function reshaping a 2D matrix into a 1D array.
-    Parameters :
-    -----------------
-    checkerboard : 2D numpy array matrix
-    Return :
-    --------------
-    flattened_checkerboard : 1D numpy array  
-    """
-    flattened_checkerboard = checkerboard.reshape(1,2500)
-    return flattened_checkerboard 
 
 def vector_to_matrix(pattern):
     """Function reshaping a vector (1D) into a  2D array.
@@ -350,29 +298,7 @@ def vector_to_matrix(pattern):
     matrix = pattern.reshape(50,50) 
     return matrix
 
-def matrix_list(history): # problème de taille/type rien ne va : a l'aide !!
-    """Function adding the given pattern to a list containing multiple patterns.
-    Parameters :
-    -----------------
-    history : (1D) list containing 1D numpy arrays  
-
-    Return : 
-    --------------
-    m_list : list of 2D numpy arrays (containing multiple patterns)
-
-    Exceptions :
-    -------------
-    >> 
-    Traceback (most recent call last):
-    ...
-    ValueError: pattern should only contain values in [-1,1]
-    """
-    m_list = []
-    for i in range (len(history)): 
-        m_list.append(vector_to_matrix(history[i]))
-    return m_list 
-
-def save_video(state_list, out_path) : #NB : state_list est la liste renvoyée par la fct précédente  
+def save_video(state_list, out_path) :   
     """Function generating a video from a sequence of patterns. takes a photo every XX perturbations
     Parameters :
     -----------------
@@ -382,46 +308,18 @@ def save_video(state_list, out_path) : #NB : state_list est la liste renvoyée p
     --------------
     out_path : path saving the video 
     """    
+    fig = plt.figure()
     liste=[]
-    for i in range (state_list.shape[0]) : #on devra le changer pour iterer seulement toutes les X_X_X modifications
-        liste.append(plt.imshow(state_list[i], cmap='gray')) #save a video of each of the experiments 
-    out_path=anim.ArtistAnimation(liste)
-    return out_path
+    for i in state_list : 
+        liste.append([plt.imshow(i.reshape(50,50), cmap='gray')]) 
+    my_anim=anim.ArtistAnimation(fig,liste)
+    my_anim.save(out_path)
 
 
 def plot_energy(history, weights,  step=1) : 
-    energydict={}
-    while i <= np.shape(history)[0] :
-        energydict[i] = f.energy(history[i], weights)
+    energydict = {}
+    i=0
+    while i < np.shape(history)[0] :
+        energydict[i]=energy(history[i],weights)
         i += step
     return energydict
-
-
-
-"""--------------------------------------- ARGUMENT TESTS -------------------------------------------------"""
-def integer_tests(arg):
-    import math
-    if math.floor(arg) != arg:
-        raise ValueError(arg, "must be an integer")
-    if arg <= 0 :
-        raise ValueError(arg, "must > 0")
-    if arg+1 == arg :
-        raise OverflowError(arg, "too large")
-
-def vector_tests(arg, max_size = None):
-    if not isinstance(arg, np.ndarray):
-        raise TypeError("Inappropriate type :", arg, "must be a np.ndarray")
-    if (arg.size < max_size):
-        raise ValueError(arg, "must be superior to", max_size)
-
-def list_element_tests(pattern, possible_values = [1, -1]):
-    if (not all(m in pattern for m in possible_values)):
-        raise ValueError(pattern, "should only contain values in", possible_values)
-
-def matrix_element_tests(patterns, possible_values = [1, -1]):
-    for pattern_nb in range (patterns.shape[0]):
-        list_element_tests(patterns[pattern_nb], possible_values= [1,-1])
-
-def list_2D_element_tests(patterns, possible_values = [1, -1]):
-    for pattern_nb in range (len(patterns)):
-        list_element_tests(patterns[pattern_nb], possible_values= [1,-1])
