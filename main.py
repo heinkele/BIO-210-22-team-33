@@ -3,93 +3,59 @@ import functions as f
 import matplotlib.pyplot as plt
 
 
-memorized_patterns = f.generate_patterns(3, 10)
-#perturbes_pattern = f.perturb_pattern(memorized_patterns[5], 1000)
+"""----------------------------VIDEO GENERATION------------------------------"""
+memorized_patterns = f.generate_patterns(80, 1000)
+perturbes_pattern = f.perturb_pattern(memorized_patterns[2], 200)
 
-f.storkey_weights(memorized_patterns)
+W= f.hebbian_weights(memorized_patterns)
 
-"""
+H = f.dynamics_async(perturbes_pattern.copy(),W, 20000,3000)
+print( (memorized_patterns[2] == H[-1]).all() )
+
+memorized_patterns = f.generate_patterns(50, 2500)
+memorized_patterns[2]= f.generate_initial_checkerboard().flatten()
+perturbes_pattern = f.perturb_pattern(memorized_patterns[2], 1000)
+
+W= f.hebbian_weights(memorized_patterns)
+
+H = f.dynamics_async(perturbes_pattern.copy(),W, 20000,3000)
+print( (memorized_patterns[2] == H[-1]).all() )
+outpath = "/Users/mischaluefkens/Desktop/SOFTWARE/BIO-210-22-team-33/output/hebbian_dynamics_async.mp4"
+f.save_video(H,outpath)
+
+
+"""----------------------------ENERGY FUNCTIONS------------------------------"""
+
+memorized_patterns = f.generate_patterns(50, 2500)
+perturbes_pattern = f.perturb_pattern(memorized_patterns[2], 1000)
+
 W_h = f.hebbian_weights(memorized_patterns)
-W_s = f.storkey_weights(memorized_patterns)
+#W_s = f.storkey_weights(memorized_patterns)
 
+history_h = f.dynamics(perturbes_pattern, W_h, 20)
+#history_s = f.dynamics(W_s, perturbes_pattern, 20)
 
-history_h = f.dynamics(W_h, perturbes_pattern, 20)
-history_s = f.dynamics(W_s, perturbes_pattern, 20)
-history_async_h = f.dynamics_async(W_h, perturbes_pattern, 30000, 10000)
-history_async_s = f.dynamics_async(W_s, perturbes_pattern, 30000, 10000)
+history_async_h = f.dynamics_async(perturbes_pattern, W_h, 30000, 10000)
+#history_async_s = f.dynamics_async(W_s, perturbes_pattern, 30000, 10000)
 
-#drawing of the 4 plots
 plt.figure
 
-plt.subplot(141) 
+plt.subplot(121) 
 plt.title('Hebbian weigths and update')
-plt.scatter(history_h)
+plt.plot(f.plot_energy(history_h,W_h).keys() ,f.plot_energy(history_h,W_h).values())
 
-plt.subplot(142) 
+plt.subplot(122) 
 plt.title('Hebbian weigths and update_async')
-plt.scatter(history_async_h)
-
-plt.subplot(243)
+plt.plot(f.plot_energy(history_async_h,W_h).keys(), f.plot_energy(history_async_h,W_h).values())
+""" 
+plt.subplot(213) 
 plt.title('Storkey weigths and update')
-plt.scatter(history_s)
+plt.plot(f.plot_energy(history_s,W_s).keys(), f.plot_energy(history_s,W_s).values())
 
-plt.subplot(244)
+plt.subplot(224) 
 plt.title('Storkey weigths and update_async')
-plt.scatter(history_async_s)
+plt.plot(f.plot_energy(history_async_s,W_s).keys(), f.plot_energy(history_async_s,W_s).values())
+"""
 
 plt.show()
 
-
-"""
-
-
-"""
-
-memorized_patterns = f.generate_patterns(3,50)
-print("memorized pattern :", memorized_patterns[2]) # our chosen pattern is the 2nd line
-
-perturbed_pattern = f.perturb_pattern(memorized_patterns[2],10)
-print ("perturbed pattern :", perturbed_pattern)
-
-W = f.hebbian_weights(memorized_patterns)
-print ("W :", W)
-
-dynamic_test = f.dynamics(perturbed_pattern,W,20)
-if ((dynamic_test==memorized_patterns[2]).all()):
-    print ("Vous etes trop forts")
-
-#W = f.storkey_weights(memorized_patterns)
-
-#f.energy(perturbed_pattern, W)
-
-
-
-async_dynamic_test = f.dynamics_async(perturbed_pattern,W,20000,3000)
-if ((async_dynamic_test==memorized_patterns[2]).all()):
-    print ("Vous etes trop forts")
-
-
-
-
-
-f.generate_initial_checkerboard()
-
-memorized_patterns = f.generate_patterns(100,2500)
-memorized_patterns[2] = f.flatten_checkerboard(f.generate_initial_checkerboard())
-
-perturbed_pattern = f.perturb_pattern(memorized_patterns[2],1000)
-W = f.hebbian_weights(memorized_patterns)
-
-dynamic_test = f.dynamics(perturbed_pattern,W,20)
-if ((dynamic_test==memorized_patterns[2]).all()):
-    print ("Vous etes trop forts")
-
-async_dynamic_test = f.dynamics_async(perturbed_pattern,W,20000,3000)
-if ((async_dynamic_test==memorized_patterns[2]).all()):
-    print ("Vous etes trop forts")
-
-
-
-print ( f.generate_initial_checkerboard())
-
-"""
