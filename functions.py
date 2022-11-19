@@ -114,12 +114,7 @@ def update(state, weights):
     state : 1 dimensional numpy array state (pattern state updtated)
     """
     new_state = np.dot(weights, state)
-    for k in range (len(new_state)):
-        if new_state[k] < 0:
-            new_state[k] = -1
-        else :
-            new_state[k] = 1
-    return new_state
+    return np.where(new_state >= 0, 1, -1)
 
 def update_async(state, weights):
     """Apply the asynchronous update rule to a state pattern (only for the i-th component of state)
@@ -135,7 +130,6 @@ def update_async(state, weights):
     i = np.random.randint(len(state))
     value = np.dot(state, weights[i])
     new_state = state.copy()
-    #np.where(state[i])
     if value >= 0 :
         new_state[i] = 1
     else :

@@ -34,22 +34,40 @@ def test_hebbian_weights():
 def test_update():
     assert np.allclose(f.update(np.array([[0, 1/3, -1/3, -1/3], [1/3, 0, -1, 1/3], [-1/3, -1, 0, -1/3], [-1/3, 1/3, -1/3, 0]]), ([-1, 1, 1, 1])), ([-1, -1, -1, 1]))
 
-def test_dynamics(): #soucis de conceptualisation
-    assert np.allclose(f.dynamics(([-1, 1, -1, 1]), [[0, 1/3, -1/3, -1/3], [1/3, 0, -1, 1/3], [-1/3, -1, 0, -1/3], [-1/3, 1/3, -1/3, 0]], 20), [[1, 1, -1, 1], [1, 1, -1, 1]])
-    memorized_pattern = np.array([1, 1, -1, 1])
-    perturbed_pattern = np.array([-1, 1, 1, 1])  #2 perturbations
-    hebbian_weight = np.array([[0, 1/3, -1/3, -1/3], [1/3, 0, -1, 1/3], [-1/3, -1, 0, -1/3], [-1/3, 1/3, -1/3, 0]])
-    assert np.allclose(f.dynamics(perturbed_pattern, hebbian_weight, 20)[-1], memorized_pattern)
-
-
-
-"""
 def test_update_async():
+    memorized_patterns = f.generate_patterns(2, 10)
+    perturbed_pattern = f.perturb_pattern(memorized_patterns[1], 5)
+    W_h= f.hebbian_weights(memorized_patterns)
+    #do same for stokey when it works
+    updated_pattern = f.update_async(perturbed_pattern, W_h)
+    compar = list(perturbed_pattern - updated_pattern)
+    assert (compar.count(0) == (len(updated_pattern)-1) and (compar.count(2) == 1 or compar.count(-2) == 1)) or (compar.count(0) == len(updated_pattern)) #only one element has changed or nothing changed
 
-def test_dynamics_async():
-    hahj
 
-"""
+
+def test_dynamics(): #soucis de conceptualisation
+    memorized_patterns = f.generate_patterns(8, 1000)
+    perturbed_pattern = f.perturb_pattern(memorized_patterns[2], 200)
+    W= f.hebbian_weights(memorized_patterns)
+    #do same with stockey when it works
+    history = f.dynamics(perturbed_pattern, W, 20) 
+
+    assert np.shape(history)[0] <= 20  #max iteration
+    if np.shape(history)[0] < 20 :
+        assert (history[-1] == history[-2]).all() #convergence
+
+def test_dynamic_async():
+    memorized_patterns = f.generate_patterns(8, 1000)
+    perturbed_pattern = f.perturb_pattern(memorized_patterns[2], 200)
+    W= f.hebbian_weights(memorized_patterns)
+    #do same with stockey when it works
+    history = f.dynamics_async(perturbed_pattern, W, 20000, 3000) 
+
+    assert np.shape(history)[0] <= 20 #max iteration 1/1000 elements in history
+    if np.shape(history)[0] < 20 :
+        assert (history[-1] == history[-2]).all and (history[-2] == history[-3]).all() #convergence
+
+    #coder cas inverse peut-etre..., voir si augmentation coverage plus tard
 
 
 """--------------------------- SALOME ------------------------------- """
@@ -62,6 +80,7 @@ def test_storkey_weights():
     assert np.shape(storkey_weight)[0] == 4 #size tests   
     assert np.shape(storkey_weight)[0] == np.shape(storkey_weight)[1]
 
+#je sais pas si on peut tester juste un return d'une valeur... A part verifier qu'elle est bien négative à la limite, je pense pas qu'il faille faire de tests pour cette fonction
 def test_energy():
     memorized_patterns = f.generate_patterns(3,4)
     W = f.hebbian_weights
@@ -74,6 +93,7 @@ def test_energy():
         update_pattern = f.update(memorized_patterns, f.hebbian_weights(memorized_patterns))
     assert energy==f.energy(update_pattern) 
 
+#on utilise jamais cette fonction donc on pourrait enlever ça
 def test_vector_to_matrix():
     pattern = f.generate_patterns(1,2500)
     matrix = f.vector_to_matrix(pattern)
@@ -102,3 +122,14 @@ def test_save_video():
     hahj
     
 """
+
+def test_plot_energy():
+    memorized_patterns = f.generate_patterns(8, 1000)
+    perturbed_pattern = f.perturb_pattern(memorized_patterns[2], 200)
+    W= f.hebbian_weights(memorized_patterns)
+    #same with stokey
+    history = f.dynamics(perturbed_pattern, W, 20) 
+    dict = list(f.plot_energy(history, W).values())
+    for i in range (len(dict)-1) :
+        assert dict[i] >= dict[i+1] #non-increasing
+
