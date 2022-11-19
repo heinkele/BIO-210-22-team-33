@@ -113,13 +113,11 @@ def hebbian_weights(patterns):
     #matrix_element_tests(patterns)
 
     W=np.zeros((np.shape(patterns)[1],np.shape(patterns)[1]))
-    for i in range (np.shape(patterns)[1]):
-        for j in range(np.shape(patterns)[1]):
-            if i==j : 
-                W[i][j]=0
-            else :
-                for k in range (np.shape(patterns)[0]):
-                    W[i][j]+=(1/np.shape(patterns)[0])*patterns[k][i]*patterns[k][j]
+    for u in range (np.shape(patterns)[0]):
+        W += (1/np.shape(patterns)[0])*np.outer(patterns[u], patterns[u])
+        np.fill_diagonal(W, 0)
+
+    print(W)
     return W
 
 def update(state, weights):
@@ -267,21 +265,24 @@ def storkey_weights(patterns):
     H=np.zeros((pattern_size, pattern_size))
 
     for u in range (num_patterns) :
-        H += np.dot (W_prev, patterns[u])
+        H += np.dot (W_prev, np.transpose(patterns[u]))
         np.reshape(H, (1, pattern_size*pattern_size))
         case_i_eq_k = np.diag(W_prev)*patterns[u]
-        W_prev_diag_eq_0 = np.fill_diag(W_prev, 0)
+        W_prev_diag_eq_0 = W_prev
+        np.fill_diagonal(W_prev_diag_eq_0, 0)
         case_j_eq_k = W_prev_diag_eq_0*patterns[u]
         H -= case_i_eq_k
         H -= case_j_eq_k
         np.reshape(H, (pattern_size, pattern_size))
 
-        W = W_prev + (np.dot(patterns[u], patterns[u]) - np.outer(patterns[u], H) - np.outer(patterns[u], np.transpose(H)))
+        W = W_prev + (1/num_patterns)*(np.outer(patterns[u], patterns[u]) - np.dot(patterns[u], H) - np.dot(patterns[u], np.transpose(H)))
+        W_prev = W
 
-    W_prev = W
+   
 
 
     print("stokey_rule :" , W)
+    print ("H : ", H)
     return W
 
 def energy(state, weights) :

@@ -3,9 +3,12 @@ import functions as f
 import matplotlib.pyplot as plt
 
 
-memorized_patterns = f.generate_patterns(50, 2500)
-perturbes_pattern = f.perturb_pattern(memorized_patterns[5], 1000)
+memorized_patterns = f.generate_patterns(3, 10)
+#perturbes_pattern = f.perturb_pattern(memorized_patterns[5], 1000)
 
+f.storkey_weights(memorized_patterns)
+
+"""
 W_h = f.hebbian_weights(memorized_patterns)
 W_s = f.storkey_weights(memorized_patterns)
 
@@ -37,7 +40,7 @@ plt.scatter(history_async_s)
 plt.show()
 
 
-
+"""
 
 
 """
