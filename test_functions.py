@@ -1,6 +1,6 @@
 import functions as f
 import numpy as np
-
+import os
 
 def test_generate_patterns ():
     M = f.generate_patterns(3,4)
@@ -12,11 +12,6 @@ def test_perturb_pattern():
     t = list(f.perturb_pattern(np.ones(50),20))
     assert t.count(-1) == 20
     assert all(m in t for m in [1, -1]) #value tests
-
-""""
---------------------------- HUGO -------------------------------
-
-"""
 
 def test_hebbian_weights():
     assert np.allclose(f.hebbian_weights([[1, 1, -1, -1], [1, 1, -1, 1], [-1, 1, -1, 1]]), ([[0, 1/3, -1/3, -1/3], [1/3, 0, -1, 1/3], [-1/3, -1, 0, -1/3], [-1/3, 1/3, -1/3, 0]]))
@@ -43,8 +38,6 @@ def test_update_async():
     compar = list(perturbed_pattern - updated_pattern)
     assert (compar.count(0) == (len(updated_pattern)-1) and (compar.count(2) == 1 or compar.count(-2) == 1)) or (compar.count(0) == len(updated_pattern)) #only one element has changed or nothing changed
 
-
-
 def test_dynamics(): #soucis de conceptualisation
     memorized_patterns = f.generate_patterns(8, 1000)
     perturbed_pattern = f.perturb_pattern(memorized_patterns[2], 200)
@@ -67,11 +60,6 @@ def test_dynamic_async():
     if np.shape(history)[0] < 20 :
         assert (history[-1] == history[-2]).all and (history[-2] == history[-3]).all() #convergence
 
-    #coder cas inverse peut-etre..., voir si augmentation coverage plus tard
-
-
-"""--------------------------- SALOME ------------------------------- """
-
 def test_storkey_weights():
     #generic values 
     assert np.allclose(f.storkey_weights([[1, 1, -1, -1], [1, 1, -1, 1], [-1, 1, -1, 1]]), ([[1.125, 0.25, -0.25, -0.5], [0.25, 0.625, -1, 0.25], [-0.25, -1, 0.625, -0.25], [-0.5, 0.25, -0.25, 1.125]]))
@@ -80,39 +68,32 @@ def test_storkey_weights():
     assert np.shape(storkey_weight)[0] == 4 #size tests   
     assert np.shape(storkey_weight)[0] == np.shape(storkey_weight)[1]
 
-#je sais pas si on peut tester juste un return d'une valeur... A part verifier qu'elle est bien négative à la limite, je pense pas qu'il faille faire de tests pour cette fonction
 def test_energy():
     memorized_patterns = np.array([1, -1])
     W = np.array([[0, 1/3], [1/3, 0]])
     assert f.energy(memorized_patterns, W) == 1/3
-
-
-"""
--------------------------- MISCHA -------------------------------
-"""
-
 
 def test_generate_initial_checkerboard():
     checkerboard = (np.reshape(f.generate_initial_checkerboard(), (-1))).tolist()
     assert checkerboard.count(1.) == 1250
     assert checkerboard.count(-1.) == 1250
 
-
-def test_pattern_match(): #erreur bizarre n'aimant pas nos types 
+def test_pattern_match():
     assert f.pattern_match(np.array([[1,-1,1],[1,1,1],[-1,-1,1]]),np.array([1,1,1])) == 1
     assert f.pattern_match(np.array([[1,-1,1],[1,1,1],[-1,-1,1]]),[1,1,-1]) == None
-"""
-------------------------- A QUI VEUT ------------------------------
+
 def test_save_video():
-    hahj
+    outpath = os.getcwd()+"/output/hebbian_dynamics_async.mp4"
+    f.save_video(np.array([[1,1,1],[-1,-1,1],[1,-1,1]]), outpath)
+    #"/Users/mischaluefkens/Desktop/SOFTWARE/BIO-210-22-team-33/output/hebbian_dynamics_async.mp4"
+    assert outpath != None
     
-"""
 
 def test_plot_energy():
     memorized_patterns = f.generate_patterns(8, 1000)
     perturbed_pattern = f.perturb_pattern(memorized_patterns[2], 200)
-    W= f.hebbian_weights(memorized_patterns)
-    #same with stokey
+    W= f.hebbian_weights(memorized_patterns)    #same with stokey
+
     history = f.dynamics(perturbed_pattern, W, 20) 
     dict = list(f.plot_energy(history, W).values())
     for i in range (len(dict)-1) :

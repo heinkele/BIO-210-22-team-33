@@ -1,6 +1,7 @@
 import numpy as np
 import functions as f
 import matplotlib.pyplot as plt
+import os
 
 
 """----------------------------VIDEO GENERATION------------------------------"""
@@ -20,7 +21,7 @@ W= f.hebbian_weights(memorized_patterns)
 
 H = f.dynamics_async(perturbes_pattern.copy(),W, 20000,3000)
 print( (memorized_patterns[2] == H[-1]).all() )
-outpath = "/Users/mischaluefkens/Desktop/SOFTWARE/BIO-210-22-team-33/output/hebbian_dynamics_async.mp4"
+outpath = os.getcwd()+"/output/hebbian_dynamics_async.mp4"
 f.save_video(H,outpath)
 
 
