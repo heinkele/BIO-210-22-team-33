@@ -82,25 +82,9 @@ def test_storkey_weights():
 
 #je sais pas si on peut tester juste un return d'une valeur... A part verifier qu'elle est bien négative à la limite, je pense pas qu'il faille faire de tests pour cette fonction
 def test_energy():
-    memorized_patterns = f.generate_patterns(3,4)
-    W = f.hebbian_weights
-    energy = f.energy(memorized_patterns, W)
-    update_pattern = []
-    if XXX > XXX:
-        raise ValueError("The energy function should be non increasing")
-    
-    for i in range (100): #tests that the energy matrix is non increasing  
-        update_pattern = f.update(memorized_patterns, f.hebbian_weights(memorized_patterns))
-    assert energy==f.energy(update_pattern) 
-
-#on utilise jamais cette fonction donc on pourrait enlever ça
-def test_vector_to_matrix():
-    pattern = f.generate_patterns(1,2500)
-    matrix = f.vector_to_matrix(pattern)
-    assert np.shape(pattern)[1] == np.shape(matrix)[0] * np.shape(matrix)[1]
-    assert np.shape(matrix)[0]==50
-    assert np.shape(matrix)[0] == np.shape(matrix)[1]
-    
+    memorized_patterns = np.array([1, -1])
+    W = np.array([[0, 1/3], [1/3, 0]])
+    assert f.energy(memorized_patterns, W) == 1/3
 
 
 """
@@ -109,13 +93,14 @@ def test_vector_to_matrix():
 
 
 def test_generate_initial_checkerboard():
-    checkerboard = f.generate_initial_checkerboard()
-    f.matrix_element_tests(checkerboard)
-    #no easy way to compare a checkerboard with a premaid one : put random checkerboard[i]==-1 etc
+    checkerboard = (np.reshape(f.generate_initial_checkerboard(), (-1))).tolist()
+    assert checkerboard.count(1.) == 1250
+    assert checkerboard.count(-1.) == 1250
+
 
 def test_pattern_match(): #erreur bizarre n'aimant pas nos types 
-    assert f.pattern_match(np.ndarray([1,-1,1],[1,1,1],[-1,-1,1]),[1,1,1]) == [1,1,1]
-    assert f.pattern_match(np.ndarray([1,-1,1],[1,1,1],[-1,-1,1]),[1,1,-1]) == None
+    assert f.pattern_match(np.array([[1,-1,1],[1,1,1],[-1,-1,1]]),np.array([1,1,1])) == 1
+    assert f.pattern_match(np.array([[1,-1,1],[1,1,1],[-1,-1,1]]),[1,1,-1]) == None
 """
 ------------------------- A QUI VEUT ------------------------------
 def test_save_video():

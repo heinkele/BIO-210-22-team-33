@@ -75,9 +75,10 @@ def pattern_match(memorized_patterns, pattern): #problème : considère memorize
     ...
     ValueError : pattern should only contain values in [-1,1]
     """
-    for l in range(memorized_patterns.shape[0]):
-        if ((pattern == memorized_patterns[l]).all()):
+    for l in range(np.shape(memorized_patterns)[0]):
+        if (pattern == memorized_patterns[l]).all():
             return l
+   
 
 def hebbian_weights(patterns):
     """Apply the hebbian learning rule on some given patterns to create the weight matrix.
@@ -279,18 +280,6 @@ def generate_initial_checkerboard():
     axis_y=axis_x.reshape(50,1) #we use the diagnal symetry of the checkboard 
     checkboard = axis_y*axis_x 
     return checkboard
-
-def vector_to_matrix(pattern):
-    """Function reshaping a vector (1D) into a  2D array.
-    Parameters :
-    -----------------
-    pattern : (1D) numpy array 
-    Return :
-    --------------
-    matrix : 2D numpy array  
-    """
-    matrix = pattern.reshape(50,50) 
-    return matrix
 
 def save_video(state_list, out_path) :   
     """Function generating a video from a sequence of patterns. takes a photo every XX perturbations
