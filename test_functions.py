@@ -84,11 +84,11 @@ def test_pattern_match():
 
 def test_save_video():
     outpath = os.getcwd()+"/output/hebbian_dynamics_async.mp4"
-    f.save_video(np.array([[1,1,1],[-1,-1,1],[1,-1,1]]), outpath)
+    f.save_video(f.generate_patterns(1,2500), outpath)
+    os.path.exists(outpath)
     #"/Users/mischaluefkens/Desktop/SOFTWARE/BIO-210-22-team-33/output/hebbian_dynamics_async.mp4"
-    assert outpath != None
+    assert os.path.exists(outpath) == True
     
-
 def test_plot_energy():
     memorized_patterns = f.generate_patterns(8, 1000)
     perturbed_pattern = f.perturb_pattern(memorized_patterns[2], 200)

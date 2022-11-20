@@ -159,9 +159,6 @@ def dynamics(state, weights, max_iter):
         state=update(state, weights)
         history.append(state)
         t += 1
-
-    print("history : ", history)
-    print(t)
     return history
 
 def dynamics_async(state, weights, max_iter, convergence_num_iter):
@@ -179,7 +176,6 @@ def dynamics_async(state, weights, max_iter, convergence_num_iter):
     --------------
     history : a list with the whole state history. (list of 1 dimensional numpy array)
     """
-
     t = 0
     rep = 0 #counter that increases if the pattern doesn't change (to see if we reach convergence_num_iter)
     history = [state]
@@ -193,7 +189,6 @@ def dynamics_async(state, weights, max_iter, convergence_num_iter):
         if t%1000 == 0:
             history.append(state)
         t+=1
-    print(t)
     return history
 
 def storkey_weights(patterns):
@@ -206,26 +201,6 @@ def storkey_weights(patterns):
     --------------
     W : 2 dimensional numpy array (weigth matrix)
     """
-
-    """"
-    for u in range (num_patterns): #nombre de patterns 
-        for i in range (pattern_size):  
-            for j in range (pattern_size):
-
-                for k in range (pattern_size):#code matrix H 
-                    if (k!=i and k!=j):
-                        H[i][j]+= W_prev[i][k]*patterns[u][k]
-    
-                W[i][j]=W_prev[i][j]+(patterns[u][i]*patterns[u][j]-patterns[u][i]*H[j][i]-patterns[u][j]*H[i][j])/num_patterns   
-
-        for i in range (pattern_size):#code matrix H
-            H += np.dot(W_prev[i], patterns[u])
-
-        W = W_prev + (np.outer(patterns[u], patterns[u]) - np.outer(patterns[u], H[u]) - np.outer(patterns[u], H[u]))/ num_patterns    
-
-        W_prev=W #actualisation de "l'ancienne matrice" 
-    """
-
     num_patterns = np.shape(patterns)[0]
     pattern_size = np.shape(patterns)[1]
     W = np.zeros((pattern_size,pattern_size))
@@ -282,7 +257,7 @@ def generate_initial_checkerboard():
     return checkboard
 
 def save_video(state_list, out_path) :   
-    """Function generating a video from a sequence of patterns. takes a photo every XX perturbations
+    """Function generating a video from a sequence of patterns.
     Parameters :
     -----------------
     state_list : 2D numpy array (list of patterns) 
@@ -298,11 +273,20 @@ def save_video(state_list, out_path) :
     my_anim=anim.ArtistAnimation(fig,liste)
     my_anim.save(out_path)
 
+def plot_energy(history, weights) : 
+    """Function associating an energy level to a state of history.
+    Parameters :
+    -----------------
+    history : 2D numpy array (list of patterns) 
+    weights : 2D array, weights matrix
 
-def plot_energy(history, weights,  step=1) : 
+    Return : 
+    --------------
+    energydict : dictionnary with keys : states and values : energy levels 
+    """  
     energydict = {}
     i=0
     while i < np.shape(history)[0] :
         energydict[i]=energy(history[i],weights)
-        i += step
+        i+=1
     return energydict
