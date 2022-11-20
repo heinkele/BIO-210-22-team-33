@@ -22,11 +22,11 @@ def generate_patterns(num_patterns, pattern_size):
     ...
     ValueError: num_patterns must be > 0
     """
-    my_list =[-1,1]
+    my_list =[-1,1] #pattern of 1 or -1 
     b=np.zeros((num_patterns,pattern_size))
     for i in range(num_patterns):
         for j in range(pattern_size):
-            b[i][j]+=[np.random.choice(my_list)]
+            b[i][j]+=[np.random.choice(my_list)] #random choice to create a random pattern 
     return b
 
 def perturb_pattern (pattern, num_perturb):
@@ -49,13 +49,13 @@ def perturb_pattern (pattern, num_perturb):
     """
     a = np.random.choice(len(pattern), num_perturb, replace=False)
     
-    p_0 = pattern.copy()
+    p_0 = pattern.copy() #deep copy to iterate on the pattern and modify it 
     for i in range (num_perturb):
         p_0[a[i]]*=-1
 
     return p_0 
 
-def pattern_match(memorized_patterns, pattern): #problème : considère memorized patterns comme une liste au lie dun ndarray
+def pattern_match(memorized_patterns, pattern): 
     """
     Match a pattern with the corresponding memorized one (see if there is a match and where)
     Parameters :
@@ -150,11 +150,11 @@ def dynamics(state, weights, max_iter):
     --------------
     history : a list with the whole state history. (list of 1 dimensional numpy array)
     """
-    t=0
+    t=0  #counter that increases if the pattern doesn't change (to see if we reach convergence_num_iter)
     old_state = np.zeros(len(state))
     history = [state] 
     
-    while (state != old_state).any() and t < max_iter :
+    while (state != old_state).any() and (t < max_iter) :
         old_state = state
         state=update(state, weights)
         history.append(state)
