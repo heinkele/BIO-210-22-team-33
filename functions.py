@@ -23,12 +23,6 @@ def generate_patterns(num_patterns, pattern_size):
     ValueError: num_patterns must be > 0
     """
     return np.random.choice([-1, 1], size = (num_patterns,pattern_size))
-    my_list =[-1,1] #pattern of 1 or -1 
-    b=np.zeros((num_patterns,pattern_size))
-    for i in range(num_patterns):
-        for j in range(pattern_size):
-            b[i][j]+=[np.random.choice(my_list)] #random choice to create a random pattern 
-    return b
 
 def perturb_pattern (pattern, num_perturb):
     """Pertube a given pattern
