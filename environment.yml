@@ -1,0 +1,9 @@
+name : hopfield_network_team33
+channels :
+- defaults
+dependencies : 
+- python=3.9
+- numpy
+- matplotib 
+- os
+prefix : \Users\salom\Desktop\hopfield_network_team33
