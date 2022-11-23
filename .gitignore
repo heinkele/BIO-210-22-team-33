@@ -21,6 +21,8 @@ downloads/
 htmlcov/
 .coverage
 .coverage.*
+.pytest_cache/
+
 
 # Translations
 
