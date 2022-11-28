@@ -202,8 +202,8 @@ def storkey_weights(patterns):
     W_prev =  W.copy() #premier w que de 0
 
     for u in range (num_patterns) :
-        H = W_prev@patterns[u]
-        H = np.reshape(H, (pattern_size, 1))
+        #H = W_prev@patterns[u]
+        H = np.reshape((W_prev@patterns[u]), (pattern_size, 1))
         case_i_eq_k = np.diag(W_prev)*patterns[u]
         case_i_eq_k = np.reshape(case_i_eq_k, (pattern_size, 1))
         W_prev_diag_eq_0 = W_prev.copy()

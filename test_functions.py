@@ -2,6 +2,7 @@ import functions as f
 import numpy as np
 import os
 
+
 def test_generate_patterns ():
     M = f.generate_patterns(3,4)
     assert M.shape[0] == 3  #size tests
@@ -13,11 +14,11 @@ def test_perturb_pattern():
     assert t.count(-1) == 20
     assert all(m in t for m in [1, -1]) #value tests
 
-def test_hebbian_weights():
+def test_hebbian_weights(benchmark):
     assert np.allclose(f.hebbian_weights([[1, 1, -1, -1], [1, 1, -1, 1], [-1, 1, -1, 1]]), ([[0, 1/3, -1/3, -1/3], [1/3, 0, -1, 1/3], [-1/3, -1, 0, -1/3], [-1/3, 1/3, -1/3, 0]]))
-    memorized_patterns = f.generate_patterns(3,4)
-    hebbian_weight = f.hebbian_weights(memorized_patterns)
-    assert np.shape(hebbian_weight)[0] == 4  
+    #hebbian_weight = f.hebbian_weights(f.generate_patterns(3,4))
+    hebbian_weight = benchmark.pedantic(f.hebbian_weights,args=(f.generate_patterns(50,2500),), rounds=5, iterations=1)
+    assert np.shape(hebbian_weight)[0] == 2500  
     assert np.shape(hebbian_weight)[0] == np.shape(hebbian_weight)[1]
     for i in range (np.shape(hebbian_weight)[0]):
         for j in range (np.shape(hebbian_weight)[1]):
@@ -26,10 +27,14 @@ def test_hebbian_weights():
             if i==j :
                 assert hebbian_weight[i][j] == 0
 
-def test_update():
+def test_update(benchmark):
+    #assert np.allclose(f.update(np.array([[0, 1/3, -1/3, -1/3], [1/3, 0, -1, 1/3], [-1/3, -1, 0, -1/3], [-1/3, 1/3, -1/3, 0]]), ([-1, 1, 1, 1])), ([-1, -1, -1, 1]))
+    patterns=f.generate_patterns(50,2500)
+    update = benchmark.pedantic(f.update,args=(f.perturb_pattern(patterns[1], 1000),f.hebbian_weights(patterns)), rounds=5, iterations=1)
+    
     assert np.allclose(f.update(np.array([[0, 1/3, -1/3, -1/3], [1/3, 0, -1, 1/3], [-1/3, -1, 0, -1/3], [-1/3, 1/3, -1/3, 0]]), ([-1, 1, 1, 1])), ([-1, -1, -1, 1]))
 
-def test_update_async():
+def test_update_async(benchmark):
     memorized_patterns = f.generate_patterns(2, 10)
     perturbed_pattern = f.perturb_pattern(memorized_patterns[1], 5)
     W_h= f.hebbian_weights(memorized_patterns)
@@ -37,42 +42,52 @@ def test_update_async():
     updated_pattern = f.update_async(perturbed_pattern, W_h)
     compar = list(perturbed_pattern - updated_pattern)
     assert (compar.count(0) == (len(updated_pattern)-1) and (compar.count(2) == 1 or compar.count(-2) == 1)) or (compar.count(0) == len(updated_pattern)) #only one element has changed or nothing changed
-
-def test_dynamics(): #soucis de conceptualisation
+    
+    patterns=f.generate_patterns(50,2500)
+    update_async = benchmark.pedantic(f.update,args=(f.perturb_pattern(patterns[1], 1000),f.hebbian_weights(patterns)), rounds=5, iterations=1)
+    
+def test_dynamics(benchmark): #soucis de conceptualisation
     memorized_patterns = f.generate_patterns(8, 1000)
     perturbed_pattern = f.perturb_pattern(memorized_patterns[2], 200)
     W= f.hebbian_weights(memorized_patterns)
     #do same with stockey when it works
     history = f.dynamics(perturbed_pattern, W, 20) 
+    patterns=f.generate_patterns(50,2500)
+    dynamics = benchmark.pedantic(f.dynamics,args=(f.perturb_pattern(patterns[1], 1000),f.hebbian_weights(patterns), 20), rounds=5, iterations=1)
+    
 
     assert np.shape(history)[0] <= 20  #max iteration
     if np.shape(history)[0] < 20 :
         assert (history[-1] == history[-2]).all() #convergence
 
-def test_dynamic_async():
+def test_dynamic_async(benchmark):
     memorized_patterns = f.generate_patterns(8, 1000)
     perturbed_pattern = f.perturb_pattern(memorized_patterns[2], 200)
     W= f.hebbian_weights(memorized_patterns)
     #do same with stockey when it works
     history = f.dynamics_async(perturbed_pattern, W, 20000, 3000) 
+    patterns=f.generate_patterns(50,2500)
+    dynamics_async= benchmark.pedantic(f.dynamics_async,args=(f.perturb_pattern(patterns[1], 1000),f.hebbian_weights(patterns), 30000, 10000), rounds=5, iterations=1)
+    
 
     assert np.shape(history)[0] <= 20 #max iteration 1/1000 elements in history
     if np.shape(history)[0] < 20 :
         assert (history[-1] == history[-2]).all and (history[-2] == history[-3]).all() #convergence
 
-def test_storkey_weights():
+def test_storkey_weights(benchmark):
     #generic values 
     assert np.allclose(f.storkey_weights([[1, 1, -1, -1], [1, 1, -1, 1], [-1, 1, -1, 1]]), ([[1.125, 0.25, -0.25, -0.5], [0.25, 0.625, -1, 0.25], [-0.25, -1, 0.625, -0.25], [-0.5, 0.25, -0.25, 1.125]]))
-    memorized_patterns = f.generate_patterns(3,4)
-    storkey_weight = f.storkey_weights(memorized_patterns)
-    assert np.shape(storkey_weight)[0] == 4 #size tests   
+    storkey_weight = benchmark.pedantic(f.storkey_weights,args=(f.generate_patterns(50,2500),), rounds=5, iterations=1)
+    assert np.shape(storkey_weight)[0] == 2500 #size tests   
     assert np.shape(storkey_weight)[0] == np.shape(storkey_weight)[1]
 
-def test_energy():
+def test_energy(benchmark):
     memorized_patterns = np.array([1, -1])
     W = np.array([[0, 1/3], [1/3, 0]])
     assert f.energy(memorized_patterns, W) == 1/3
-
+    patterns=f.generate_patterns(50,2500)
+    energy = benchmark.pedantic(f.energy,args=(f.perturb_pattern(patterns[1], 1000),f.hebbian_weights(patterns)), rounds=5, iterations=1)
+        
 def test_generate_initial_checkerboard():
     checkerboard = (np.reshape(f.generate_initial_checkerboard(), (-1))).tolist()
     assert checkerboard.count(1.) == 1250
