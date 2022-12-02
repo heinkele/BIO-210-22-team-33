@@ -1,8 +1,9 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
 import matplotlib.animation as anim
+from numba import jit
 
-
+@jit
 def generate_patterns(num_patterns, pattern_size):
     """Generate the patterns to memorize
     Parameters :
@@ -22,8 +23,9 @@ def generate_patterns(num_patterns, pattern_size):
     ...
     ValueError: num_patterns must be > 0
     """
-    return np.random.choice([-1, 1], size = (num_patterns,pattern_size))
+    return np.random.choice(np.array([-1, 1]), size = (num_patterns,pattern_size))
 
+#@jit
 def perturb_pattern (pattern, num_perturb):
     """Pertube a given pattern
     Parameters :
@@ -50,6 +52,7 @@ def perturb_pattern (pattern, num_perturb):
 
     return p_0 
 
+@jit
 def pattern_match(memorized_patterns, pattern): 
     """
     Match a pattern with the corresponding memorized one (see if there is a match and where)
@@ -75,6 +78,7 @@ def pattern_match(memorized_patterns, pattern):
             return l
    
 
+#@jit
 def hebbian_weights(patterns):
     """Apply the hebbian learning rule on some given patterns to create the weight matrix.
     Parameters :
@@ -98,6 +102,7 @@ def hebbian_weights(patterns):
         np.fill_diagonal(W, 0)
     return W
 
+#@jit
 def update(state, weights):
     """Apply the update rule to a state pattern.
     Parameters :
@@ -112,6 +117,7 @@ def update(state, weights):
     new_state = np.dot(weights, state)
     return np.where(new_state >= 0, 1, -1)
 
+#@jit
 def update_async(state, weights):
     """Apply the asynchronous update rule to a state pattern (only for the i-th component of state)
     Parameters :
@@ -132,6 +138,7 @@ def update_async(state, weights):
         new_state[i] = -1
     return new_state
 
+#@jit
 def dynamics(state, weights, max_iter):
     """Run the dynamical system from an initial state until convergence or until a maximum number of steps is reached.
        Convergence is achieved when two consecutive updates return the same state.
@@ -156,6 +163,7 @@ def dynamics(state, weights, max_iter):
         t += 1
     return history
 
+#@jit
 def dynamics_async(state, weights, max_iter, convergence_num_iter):
 
     """Run the dynamical system from an initial state until convergence or until a maximum number of steps is reached.
@@ -186,6 +194,7 @@ def dynamics_async(state, weights, max_iter, convergence_num_iter):
         t+=1
     return history
 
+#@jit
 def storkey_weights(patterns):
     """Apply the Storkey learning rule for some patterns to create the weight matrix
     Parameters :
@@ -214,7 +223,8 @@ def storkey_weights(patterns):
         W = W_prev + (1/pattern_size)*(np.outer(patterns[u], patterns[u]) - patterns[u] * H - np.transpose(patterns[u]*H))
         W_prev = W
     return W
-  
+
+#@jit  
 def energy(state, weights) :
     """Function that calculates the energy associated to the given pattern
     Parameters :
@@ -228,6 +238,7 @@ def energy(state, weights) :
     """
     return -(1/2)*np.sum(weights * np.outer(state,state))
 
+#@jit
 def generate_initial_checkerboard(): 
     """Function creating a initial checkerboard with alternate black and white boxes : A 50x50 checkerboard with 5x5 checkers
     Parameters :
@@ -251,6 +262,7 @@ def generate_initial_checkerboard():
     checkboard = axis_y*axis_x 
     return checkboard
 
+#@jit
 def save_video(state_list, out_path) :   
     """Function generating a video from a sequence of patterns.
     Parameters :
@@ -268,6 +280,7 @@ def save_video(state_list, out_path) :
     my_anim=anim.ArtistAnimation(fig,liste)
     my_anim.save(out_path)
 
+#@jit
 def plot_energy(history, weights) : 
     """Function associating an energy level to a state of history.
     Parameters :

@@ -1,6 +1,7 @@
 import functions as f
 import numpy as np
-import os
+from os import getcwd
+from os import path
 
 
 def test_generate_patterns ():
@@ -98,11 +99,11 @@ def test_pattern_match():
     assert f.pattern_match(np.array([[1,-1,1],[1,1,1],[-1,-1,1]]),[1,1,-1]) == None
 
 def test_save_video():
-    outpath = os.getcwd()+"/output/hebbian_dynamics_async.mp4"
+    outpath = getcwd()+"/output/hebbian_dynamics_async.mp4"
     f.save_video(f.generate_patterns(1,2500), outpath)
-    os.path.exists(outpath)
+    path.exists(outpath)
     #"/Users/mischaluefkens/Desktop/SOFTWARE/BIO-210-22-team-33/output/hebbian_dynamics_async.mp4"
-    assert os.path.exists(outpath) == True
+    assert path.exists(outpath) == True
     
 def test_plot_energy():
     memorized_patterns = f.generate_patterns(8, 1000)

@@ -1,7 +1,7 @@
 import numpy as np
 import functions as f
 import matplotlib.pyplot as plt
-import os
+from os import getcwd
 from timeit import default_timer as timer 
 
 
@@ -25,16 +25,16 @@ def main():
     S_async = f.dynamics_async(perturbes_pattern.copy(),W_s, 20000,3000)
     S_dyn = f.dynamics(perturbes_pattern.copy(),W_s, 20000)
 
-    outpath = os.getcwd()+"/output/hebbian_dynamics_async.mp4"
+    outpath = getcwd()+"/output/hebbian_dynamics_async.mp4"
     f.save_video(H_async,outpath)
 
-    outpath = os.getcwd()+"/output/hebbian_dynamics.mp4"
+    outpath = getcwd()+"/output/hebbian_dynamics.mp4"
     f.save_video(H_dyn,outpath)
 
-    outpath = os.getcwd()+"/output/storkey_dynamics_async.mp4"
+    outpath = getcwd()+"/output/storkey_dynamics_async.mp4"
     f.save_video(S_async,outpath)
 
-    outpath = os.getcwd()+"/output/storkey_dynamics.mp4"
+    outpath = getcwd()+"/output/storkey_dynamics.mp4"
     f.save_video(S_dyn,outpath)
 
 
