@@ -23,15 +23,13 @@ def test_hebbian_weights(benchmark):
     #hebbian_weight = f.hebbian_weights(f.generate_patterns(3,4))
     hebbian_weight = benchmark.pedantic(f.hebbian_weights, args=(
         f.generate_patterns(50, 2500),), rounds=5, iterations=1)
+
     assert np.shape(hebbian_weight)[0] == 2500
     assert np.shape(hebbian_weight)[0] == np.shape(hebbian_weight)[1]
-    for i in range(np.shape(hebbian_weight)[0]):
-        for j in range(np.shape(hebbian_weight)[1]):
-            assert (hebbian_weight[i][j] <= 1) and (hebbian_weight[i][j] >= -1)
-            assert hebbian_weight[i][j] == hebbian_weight[j][i]
-            if i == j:
-                assert hebbian_weight[i][j] == 0
-
+    assert [hebbian_weight <= 1] and [hebbian_weight >= -1]
+    assert (np.diag(hebbian_weight) == 0).all()
+    
+    
 
 def test_update(benchmark):
     #assert np.allclose(f.update(np.array([[0, 1/3, -1/3, -1/3], [1/3, 0, -1, 1/3], [-1/3, -1, 0, -1/3], [-1/3, 1/3, -1/3, 0]]), ([-1, 1, 1, 1])), ([-1, -1, -1, 1]))

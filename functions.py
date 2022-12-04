@@ -25,9 +25,7 @@ def generate_patterns(num_patterns, pattern_size):
     """
     return np.random.choice(np.array([-1, 1]), size=(num_patterns, pattern_size))
 
-# @jit
-
-
+@jit
 def perturb_pattern(pattern, num_perturb):
     """Pertube a given pattern
     Parameters :
@@ -55,7 +53,7 @@ def perturb_pattern(pattern, num_perturb):
     return p_0
 
 
-@jit
+#@jit
 def pattern_match(memorized_patterns, pattern):
     """
     Match a pattern with the corresponding memorized one (see if there is a match and where)
@@ -81,7 +79,7 @@ def pattern_match(memorized_patterns, pattern):
             return l
 
 
-# @jit
+#@jit
 def hebbian_weights(patterns):
     """Apply the hebbian learning rule on some given patterns to create the weight matrix.
     Parameters :
@@ -218,9 +216,9 @@ def storkey_weights(patterns):
     --------------
     W : 2 dimensional numpy array (weigth matrix)
     """
-    from storkey_cython import storkey
-    storkey()
-    ''' 
+    #from storkey_cython import storkey
+    #storkey()
+     
     num_patterns = np.shape(patterns)[0]
     pattern_size = np.shape(patterns)[1]
     W = np.zeros((pattern_size, pattern_size))
@@ -240,7 +238,7 @@ def storkey_weights(patterns):
             patterns[u], patterns[u]) - patterns[u] * H - np.transpose(patterns[u]*H))
         W_prev = W
     return W
-    '''
+    
 # @jit
 
 
