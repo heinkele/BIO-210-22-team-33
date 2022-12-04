@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 from numba import jit
 
-@jit
 def generate_patterns(num_patterns, pattern_size):
     """Generate the patterns to memorize
     Parameters :
@@ -25,7 +24,7 @@ def generate_patterns(num_patterns, pattern_size):
     """
     return np.random.choice(np.array([-1, 1]), size=(num_patterns, pattern_size))
 
-@jit
+
 def perturb_pattern(pattern, num_perturb):
     """Pertube a given pattern
     Parameters :
@@ -53,7 +52,6 @@ def perturb_pattern(pattern, num_perturb):
     return p_0
 
 
-#@jit
 def pattern_match(memorized_patterns, pattern):
     """
     Match a pattern with the corresponding memorized one (see if there is a match and where)
@@ -79,7 +77,6 @@ def pattern_match(memorized_patterns, pattern):
             return l
 
 
-#@jit
 def hebbian_weights(patterns):
     """Apply the hebbian learning rule on some given patterns to create the weight matrix.
     Parameters :
@@ -103,7 +100,6 @@ def hebbian_weights(patterns):
         np.fill_diagonal(W, 0)
     return W
 
-# @jit
 
 
 def update(state, weights):
@@ -120,7 +116,6 @@ def update(state, weights):
     new_state = np.dot(weights, state)
     return np.where(new_state >= 0, 1, -1)
 
-# @jit
 
 
 def update_async(state, weights):
@@ -143,7 +138,6 @@ def update_async(state, weights):
         new_state[i] = -1
     return new_state
 
-# @jit
 
 
 def dynamics(state, weights, max_iter):
@@ -170,7 +164,6 @@ def dynamics(state, weights, max_iter):
         t += 1
     return history
 
-# @jit
 
 
 def dynamics_async(state, weights, max_iter, convergence_num_iter):
@@ -203,7 +196,6 @@ def dynamics_async(state, weights, max_iter, convergence_num_iter):
         t += 1
     return history
 
-# @jit
 
 
 def storkey_weights(patterns):
@@ -239,7 +231,6 @@ def storkey_weights(patterns):
         W_prev = W
     return W
     
-# @jit
 
 
 def energy(state, weights):
@@ -255,7 +246,6 @@ def energy(state, weights):
     """
     return -(1/2)*np.sum(weights * np.outer(state, state))
 
-# @jit
 
 
 def generate_initial_checkerboard():
@@ -282,7 +272,6 @@ def generate_initial_checkerboard():
     checkboard = axis_y*axis_x
     return checkboard
 
-# @jit
 
 
 def save_video(state_list, out_path):
@@ -302,7 +291,6 @@ def save_video(state_list, out_path):
     my_anim = anim.ArtistAnimation(fig, liste)
     my_anim.save(out_path)
 
-# @jit
 
 
 def plot_energy(history, weights):
