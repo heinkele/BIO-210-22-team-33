@@ -45,7 +45,6 @@ def test_update_async(benchmark):
     memorized_patterns = f.generate_patterns(2, 10)
     perturbed_pattern = f.perturb_pattern(memorized_patterns[1], 5)
     W_h = f.hebbian_weights(memorized_patterns)
-    # do same for stokey when it works
     updated_pattern = f.update_async(perturbed_pattern, W_h)
     compar = list(perturbed_pattern - updated_pattern)
     assert (compar.count(0) == (len(updated_pattern)-1) and (compar.count(2) == 1 or compar.count(-2) == 1)
@@ -56,11 +55,10 @@ def test_update_async(benchmark):
         patterns[1], 1000), f.hebbian_weights(patterns)), rounds=5, iterations=1)
 
 
-def test_dynamics(benchmark):  # soucis de conceptualisation
+def test_dynamics(benchmark):  
     memorized_patterns = f.generate_patterns(8, 1000)
     perturbed_pattern = f.perturb_pattern(memorized_patterns[2], 200)
     W = f.hebbian_weights(memorized_patterns)
-    # do same with stockey when it works
     history = f.dynamics(perturbed_pattern, W, 20)
     patterns = f.generate_patterns(50, 2500)
     dynamics = benchmark.pedantic(f.dynamics, args=(f.perturb_pattern(
@@ -75,7 +73,6 @@ def test_dynamic_async(benchmark):
     memorized_patterns = f.generate_patterns(8, 1000)
     perturbed_pattern = f.perturb_pattern(memorized_patterns[2], 200)
     W = f.hebbian_weights(memorized_patterns)
-    # do same with stockey when it works
     history = f.dynamics_async(perturbed_pattern, W, 20000, 3000)
     patterns = f.generate_patterns(50, 2500)
     dynamics_async = benchmark.pedantic(f.dynamics_async, args=(f.perturb_pattern(
