@@ -28,8 +28,7 @@ def test_hebbian_weights(benchmark):
     assert np.shape(hebbian_weight)[0] == np.shape(hebbian_weight)[1]
     assert [hebbian_weight <= 1] and [hebbian_weight >= -1]
     assert (np.diag(hebbian_weight) == 0).all()
-    
-    
+
 
 def test_update(benchmark):
     #assert np.allclose(f.update(np.array([[0, 1/3, -1/3, -1/3], [1/3, 0, -1, 1/3], [-1/3, -1, 0, -1/3], [-1/3, 1/3, -1/3, 0]]), ([-1, 1, 1, 1])), ([-1, -1, -1, 1]))
@@ -55,7 +54,7 @@ def test_update_async(benchmark):
         patterns[1], 1000), f.hebbian_weights(patterns)), rounds=5, iterations=1)
 
 
-def test_dynamics(benchmark):  
+def test_dynamics(benchmark):
     memorized_patterns = f.generate_patterns(8, 1000)
     perturbed_pattern = f.perturb_pattern(memorized_patterns[2], 200)
     W = f.hebbian_weights(memorized_patterns)

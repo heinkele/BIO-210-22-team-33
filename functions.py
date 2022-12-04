@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 from numba import jit
 
+
 def generate_patterns(num_patterns, pattern_size):
     """Generate the patterns to memorize
     Parameters :
@@ -101,7 +102,6 @@ def hebbian_weights(patterns):
     return W
 
 
-
 def update(state, weights):
     """Apply the update rule to a state pattern.
     Parameters :
@@ -115,7 +115,6 @@ def update(state, weights):
     """
     new_state = np.dot(weights, state)
     return np.where(new_state >= 0, 1, -1)
-
 
 
 def update_async(state, weights):
@@ -137,7 +136,6 @@ def update_async(state, weights):
     else:
         new_state[i] = -1
     return new_state
-
 
 
 def dynamics(state, weights, max_iter):
@@ -163,7 +161,6 @@ def dynamics(state, weights, max_iter):
         history.append(state)
         t += 1
     return history
-
 
 
 def dynamics_async(state, weights, max_iter, convergence_num_iter):
@@ -197,7 +194,6 @@ def dynamics_async(state, weights, max_iter, convergence_num_iter):
     return history
 
 
-
 def storkey_weights(patterns):
     """Apply the Storkey learning rule for some patterns to create the weight matrix
     Parameters :
@@ -209,15 +205,14 @@ def storkey_weights(patterns):
     W : 2 dimensional numpy array (weigth matrix)
     """
     #from storkey_cython import storkey
-    #storkey()
-     
+    # storkey()
+
     num_patterns = np.shape(patterns)[0]
     pattern_size = np.shape(patterns)[1]
     W = np.zeros((pattern_size, pattern_size))
     W_prev = W.copy()  # premier w que de 0
 
     for u in range(num_patterns):
-        #H = W_prev@patterns[u]
         H = np.reshape((W_prev@patterns[u]), (pattern_size, 1))
         case_i_eq_k = np.diag(W_prev)*patterns[u]
         case_i_eq_k = np.reshape(case_i_eq_k, (pattern_size, 1))
@@ -230,7 +225,6 @@ def storkey_weights(patterns):
             patterns[u], patterns[u]) - patterns[u] * H - np.transpose(patterns[u]*H))
         W_prev = W
     return W
-    
 
 
 def energy(state, weights):
@@ -245,7 +239,6 @@ def energy(state, weights):
     e : float or int : energy of the network 
     """
     return -(1/2)*np.sum(weights * np.outer(state, state))
-
 
 
 def generate_initial_checkerboard():
@@ -273,7 +266,6 @@ def generate_initial_checkerboard():
     return checkboard
 
 
-
 def save_video(state_list, out_path):
     """Function generating a video from a sequence of patterns.
     Parameters :
@@ -290,7 +282,6 @@ def save_video(state_list, out_path):
         liste.append([plt.imshow(i.reshape(50, 50), cmap='gray')])
     my_anim = anim.ArtistAnimation(fig, liste)
     my_anim.save(out_path)
-
 
 
 def plot_energy(history, weights):

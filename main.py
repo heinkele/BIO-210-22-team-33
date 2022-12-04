@@ -1,6 +1,6 @@
 import numpy as np
 import functions as f
-import matplotlib.pyplot as pltpytest
+import matplotlib.pyplot as plt
 from os import getcwd
 
 
