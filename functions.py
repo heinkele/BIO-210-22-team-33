@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 from numba import jit
 
-
 @jit
 def generate_patterns(num_patterns, pattern_size):
     """Generate the patterns to memorize
@@ -219,6 +218,9 @@ def storkey_weights(patterns):
     --------------
     W : 2 dimensional numpy array (weigth matrix)
     """
+    from storkey_cython import storkey
+    storkey()
+    ''' 
     num_patterns = np.shape(patterns)[0]
     pattern_size = np.shape(patterns)[1]
     W = np.zeros((pattern_size, pattern_size))
@@ -238,7 +240,7 @@ def storkey_weights(patterns):
             patterns[u], patterns[u]) - patterns[u] * H - np.transpose(patterns[u]*H))
         W_prev = W
     return W
-
+    '''
 # @jit
 
 
