@@ -23,11 +23,11 @@ You can activate the environment using:
 # Usage
 
 If you wish to generate the 4 energy graphs (vs time), run the file main_energy_graphs.py with the following command in the terminal :
-`python main_energy_graphs.py`   #don't understand why doesn't work
+`python main_energy_graphs.py` 
 This will generate 4 energy graphs combining one of the two different weight calculation systems (hebbian and storkey) and one of the two different update systems (asynchronous or not)
 
 If you wish to visualize the evolution of the convergence with a checkerboard of each 4 systems, run the file main_videos.py with the following command :
-`python main_videos.py`         #don't understand why doesn't work
+`python main_videos.py`       
 This will generate 4 videos which aim to converge back to the initial state represented by a checkerboard.
 
 If you wish to run both of the previous commands at once, run main.py with the following command :
