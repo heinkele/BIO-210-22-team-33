@@ -1,10 +1,12 @@
 import numpy as np
 import functions as f
 import matplotlib.pyplot as plt
+import Hopfield_network as H
 from os import getcwd
 
+"""
 
-"""----------------------------VIDEO GENERATION------------------------------"""
+""""""----------------------------VIDEO GENERATION------------------------------""""""
 
 
 def main():
@@ -34,7 +36,7 @@ def main():
     outpath = getcwd()+"/output/storkey_dynamics.mp4"
     f.save_video(S_dyn, outpath)
 
-    """----------------------------ENERGY FUNCTIONS------------------------------"""
+    """"""----------------------------ENERGY FUNCTIONS------------------------------""""""
 
     memorized_patterns = f.generate_patterns(50, 2500)
     perturbes_pattern = f.perturb_pattern(memorized_patterns[2], 1000)
@@ -75,3 +77,21 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+"""
+
+def main():
+
+    memorized_patterns = H.Patterns(50, 2500)
+    memorized_patterns[2] = H.generate_initial_checkerboard().flatten()
+    perturbes_pattern = H.perturb_pattern(memorized_patterns[2], 1000)
+
+    W = H.HopfieldNetwork(memorized_patterns, "hebbian")
+
+    saver = H.DataSaver()
+
+    W_async = W.dynamics_async(perturbes_pattern.copy(), saver, 20000, 3000)
+
+    outpath = getcwd()+"/output/hebbian_dynamics_async.mp4"
+    W.plot_energy
+    H.save_video(W_async, outpath)
