@@ -41,9 +41,13 @@ We use [pytest](https://docs.pytest.org/en/6.2.x/contents.html).
 
 ## Pytests
 
-We created unit-tests for the `functions.py` in `test_functions.py`. You can also run the whole test-suite with
+We created unit-tests for the file `functions.py` in `test_functions.py`. You can also run the whole test-suite with
 
 ```pytest```
+
+This command will also run benchmark. 
+
+
 
 ## Coverage
 
