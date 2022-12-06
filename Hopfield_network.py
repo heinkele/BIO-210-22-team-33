@@ -4,7 +4,12 @@ import matplotlib.animation as anim
 
 class Patterns:
     def __init__(self, num_patterns, pattern_size):
-        self.patterns = np.random.choice(np.array([-1, 1]), size=(num_patterns, pattern_size))
+        self.num_patterns = num_patterns
+        self.pattern_size = pattern_size
+        #self.patterns = np.random.choice(np.array([-1, 1]), size=(num_patterns, pattern_size))
+
+    def generate_patterns(self):
+        self.patterns = np.random.choice(np.array([-1, 1]), size=(self.num_patterns, self.pattern_size))
 
     def perturb_patterns(self, pattern, num_perturb):
         """Pertube a given pattern
@@ -76,9 +81,8 @@ class Patterns:
             i += 1
         # we use the diagnal symetry of the checkboard
         axis_y = axis_x.reshape(50, 1)
-        checkboard = axis_y*axis_x
-        return checkboard
-
+        self.checkboard = axis_y*axis_x
+        #return checkboard
 
 class HopfieldNetwork:
     def __init__(self, patterns, rule="hebbian"):
@@ -283,7 +287,7 @@ class DataSaver:
         """
         fig = plt.figure()
         liste = []
-        for i in state_list:
+        for i in self.saver.data["state"]:
             liste.append([plt.imshow(i.reshape(50, 50), cmap='gray')])
         my_anim = anim.ArtistAnimation(fig, liste)
         my_anim.save(out_path)
@@ -292,4 +296,5 @@ class DataSaver:
         plt.figure
         plt.title(self.rule)
         plt.plot(self.get_data())
+        plt.show()
 
