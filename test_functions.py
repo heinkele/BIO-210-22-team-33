@@ -3,23 +3,37 @@ import numpy as np
 from os import getcwd
 from os import path
 
+
+class TestPatterns :
+    
+    def test_generate_patterns(self):
+        M = h.Patterns(3,4)
+        M.generate_patterns()
+        assert M.patterns.shape[0] == 3  # size tests
+        assert M.patterns.shape[1] == 4
+        assert all(m in M.patterns for m in [1, -1])  # value tests
+
+    def test_pertub_pattern(self):
+        M = h.Patterns(1,50)
+        M.generate_patterns()
+        M.patterns = np.ones(50)
+        a = M.patterns.perturb_pattern(M.patterns, 20)
+        t = list(a)
+        assert t.count(-1) == 20
+        assert all(m in t for m in [1, -1])  # value tests
 """
 def test_generate_patterns():
     M = f.generate_patterns(3, 4)
     assert M.shape[0] == 3  # size tests
     assert M.shape[1] == 4
     assert all(m in M for m in [1, -1])  # value tests
-"""
 
-def test_Patterns():
-    M = h.Patterns(3,4)
-    print(M)
-    """
+
+    
     assert M.shape[0] == 3  # size tests
     assert M.shape[1] == 4
     assert all(m in M for m in [1, -1])  # value tests
-"""
-"""
+
 def test_perturb_pattern():
     t = list(f.perturb_pattern(np.ones(50), 20))
     assert t.count(-1) == 20

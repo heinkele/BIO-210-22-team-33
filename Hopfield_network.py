@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 
 class Patterns:
-    def __init__(self, num_patterns, pattern_size):
+    def __init__(self, num_patterns, pattern_size, patterns=0):
         self.num_patterns = num_patterns
         self.pattern_size = pattern_size
-        #self.patterns = np.random.choice(np.array([-1, 1]), size=(num_patterns, pattern_size))
+        self.patterns = patterns
 
     def generate_patterns(self):
         self.patterns = np.random.choice(np.array([-1, 1]), size=(self.num_patterns, self.pattern_size))
@@ -31,9 +31,11 @@ class Patterns:
         """
         a = np.random.choice(len(pattern), num_perturb, replace=False)
 
-        self.pattern = self.pattern.copy()  # deep copy to iterate on the pattern and modify it
+        pattern = pattern.copy()  # deep copy to iterate on the pattern and modify it
         for i in range(num_perturb):
-            self.pattern[a[i]] *= -1
+            pattern[a[i]] *= -1
+
+        return pattern
 
 
     def pattern_match(self):
@@ -81,15 +83,15 @@ class Patterns:
             i += 1
         # we use the diagnal symetry of the checkboard
         axis_y = axis_x.reshape(50, 1)
-        self.checkboard = axis_y*axis_x
-        #return checkboard
+        checkboard = axis_y*axis_x
+        return checkboard
 
 class HopfieldNetwork:
     def __init__(self, patterns, rule="hebbian"):
         if rule == "hebbian" :
-            self.weights = self.hebbian_weigths(patterns)
+            self.weights = HopfieldNetwork.hebbian_weigths(patterns)
         if rule == "storkey":
-            self.weights = self.storkey_weights(patterns)
+            self.weights = HopfieldNetwork.storkey_weights(patterns)
             
 
 
@@ -252,9 +254,9 @@ class DataSaver:
 
     def store_iter(self, state, weights):
         if state is not None:
-            self.date["state"].append(state.copy())
+            self.data["state"].append(state.copy())
         if state is not None:
-            self.date["energy"].append(self.compute_energy(state, weights))
+            self.data["energy"].append(self.compute_energy(state, weights))
 
 
     def compute_energy(self, state, weights):

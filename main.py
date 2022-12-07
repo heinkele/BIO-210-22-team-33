@@ -86,13 +86,12 @@ if __name__ == '__main__':
 def main():
 
     memorized_patterns = h.Patterns(50, 2500)
-    memorized_patterns.generate_patterns()
-    memorized_patterns.generate_initial_checkerboard()
-    memorized_patterns.patterns[2] = memorized_patterns.checkboard.flatten()
-    #print(memorized_patterns.patterns[2])
+    memorized_patterns = memorized_patterns.generate_patterns()
     
+    memorized_patterns[2] = h.generate_initial_checkerboard().flatten()   
     
-    perturbes_pattern = memorized_patterns.patterns[2].perturb_pattern(memorized_patterns.patterns[2], 1000)
+    perturbes_pattern = memorized_patterns.perturb_patterns(memorized_patterns[2], 1000)
+    print(perturbes_pattern)
 
     W = h.HopfieldNetwork(memorized_patterns, "hebbian")
 
