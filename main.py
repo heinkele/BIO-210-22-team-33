@@ -1,13 +1,14 @@
 import numpy as np
 import functions as f
+import experiment as e
 import matplotlib.pyplot as plt
-import Hopfield_network as h
 from os import getcwd
+from math import log, sqrt
 
-"""
 
 
-""""""----------------------------VIDEO GENERATION------------------------------"""""""
+
+"""----------------------------VIDEO GENERATION------------------------------"""
 
 
 def main():
@@ -37,13 +38,13 @@ def main():
     outpath = getcwd()+"/output/storkey_dynamics.mp4"
     f.save_video(S_dyn, outpath)
 
-    """"""----------------------------ENERGY FUNCTIONS------------------------------"""""""
+    """----------------------------ENERGY FUNCTIONS------------------------------"""
 
-    memorized_patterns = f.generate_patterns(50, 2500)
+    """memorized_patterns = f.generate_patterns(50, 2500)
     perturbes_pattern = f.perturb_pattern(memorized_patterns[2], 1000)
 
     W_h = f.hebbian_weights(memorized_patterns)
-    W_s = f.storkey_weights(memorized_patterns)
+    W_s = f.storkey_weights(memorized_patterns)"""
 
     history_h = f.dynamics(perturbes_pattern, W_h, 20)
     history_s = f.dynamics(perturbes_pattern, W_s, 20)
@@ -79,29 +80,13 @@ def main():
 if __name__ == '__main__':
     main()
 
+"""-------------------------------------EXPERIMENT------------------------------------"""
 
-""" 
-
-
-def main():
-
-    memorized_patterns = h.Patterns(50, 2500)
-    memorized_patterns = memorized_patterns.generate_patterns()
-    
-    memorized_patterns[2] = h.generate_initial_checkerboard().flatten()   
-    
-    perturbes_pattern = memorized_patterns.perturb_patterns(memorized_patterns[2], 1000)
-    print(perturbes_pattern)
-
-    W = h.HopfieldNetwork(memorized_patterns, "hebbian")
-
-    saver = h.DataSaver()
-
-    W_async = W.dynamics_async(perturbes_pattern.copy(), saver, 20000, 3000)
-
-    outpath = getcwd()+"/output/hebbian_dynamics_async.mp4"
-    W.plot_energy()
-    h.save_video(W_async, outpath)
-
-if __name__ == '__main__':
-    main()
+sizes=[10, 18, 34, 63, 116, 215, 397, 733, 1354, 2500]
+results=[]
+for i in range (len(sizes)):
+    n = sizes[i]
+    num_patterns = t
+    c_n_hebbian = n/(2*log(n, 10))  #log base 10
+    c_n_storkey = n/(sqrt(2*log(n, 10)))
+    results.append(e.experiment(sizes[i], t, "hebbian", 0.2*t))

@@ -1,27 +1,9 @@
-import Hopfield_network as h
+import functions as f
 import numpy as np
 from os import getcwd
 from os import path
 
 
-class TestPatterns :
-    
-    def test_generate_patterns(self):
-        M = h.Patterns(3,4)
-        M.generate_patterns()
-        assert M.patterns.shape[0] == 3  # size tests
-        assert M.patterns.shape[1] == 4
-        assert all(m in M.patterns for m in [1, -1])  # value tests
-
-    def test_pertub_pattern(self):
-        M = h.Patterns(1,50)
-        M.generate_patterns()
-        M.patterns = np.ones(50)
-        a = M.patterns.perturb_pattern(M.patterns, 20)
-        t = list(a)
-        assert t.count(-1) == 20
-        assert all(m in t for m in [1, -1])  # value tests
-"""
 def test_generate_patterns():
     M = f.generate_patterns(3, 4)
     assert M.shape[0] == 3  # size tests
@@ -157,4 +139,3 @@ def test_plot_energy():
     dict = list(f.plot_energy(history, W).values())
     for i in range(len(dict)-1):
         assert dict[i] >= dict[i+1]  # non-increasing
-"""
