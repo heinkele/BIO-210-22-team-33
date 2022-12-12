@@ -86,7 +86,10 @@ sizes=[10, 18, 34, 63, 116, 215, 397, 733, 1354, 2500]
 results=[]
 for i in range (len(sizes)):
     n = sizes[i]
-    num_patterns = t
     c_n_hebbian = n/(2*log(n, 10))  #log base 10
     c_n_storkey = n/(sqrt(2*log(n, 10)))
-    results.append(e.experiment(sizes[i], t, "hebbian", 0.2*t))
+    num_patterns = np.linspace(0.5 * c(N), 2 * C(N), 10).astype(int)
+
+    results.append(e.experiment(sizes[i], num_patterns, "hebbian", 0.2*num_patterns))
+    results.append(e.experiment(sizes[i], num_patterns, "storkey", 0.2*num_patterns))
+c_n_hebbian
