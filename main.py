@@ -2,13 +2,14 @@ import numpy as np
 import functions as f
 import experiment as e
 import matplotlib.pyplot as plt
+import pandas as pd
 from os import getcwd
 from math import log, sqrt
 
 
 
 
-"""----------------------------VIDEO GENERATION------------------------------"""
+"""----------------------------VIDEO GENERATION------------------------------
 
 
 def main():
@@ -38,14 +39,14 @@ def main():
     outpath = getcwd()+"/output/storkey_dynamics.mp4"
     f.save_video(S_dyn, outpath)
 
-    """----------------------------ENERGY FUNCTIONS------------------------------"""
+    """"""----------------------------ENERGY FUNCTIONS------------------------------""""""
 
-    """memorized_patterns = f.generate_patterns(50, 2500)
+    memorized_patterns = f.generate_patterns(50, 2500)
     perturbes_pattern = f.perturb_pattern(memorized_patterns[2], 1000)
 
     W_h = f.hebbian_weights(memorized_patterns)
     W_s = f.storkey_weights(memorized_patterns)"""
-
+"""
     history_h = f.dynamics(perturbes_pattern, W_h, 20)
     history_s = f.dynamics(perturbes_pattern, W_s, 20)
 
@@ -75,21 +76,41 @@ def main():
              f.plot_energy(history_async_s, W_s).values())
 
     plt.show()
+"""
 
 
-if __name__ == '__main__':
-    main()
 
 """-------------------------------------EXPERIMENT------------------------------------"""
 
-sizes=[10, 18, 34, 63, 116, 215, 397, 733, 1354, 2500]
-results=[]
-for i in range (len(sizes)):
-    n = sizes[i]
-    c_n_hebbian = n/(2*log(n, 10))  #log base 10
-    c_n_storkey = n/(sqrt(2*log(n, 10)))
-    num_patterns = np.linspace(0.5 * c(N), 2 * C(N), 10).astype(int)
+def main():
+    sizes=[10, 18, 34, 63, 116, 215, 397, 733, 1354, 2500]
+    results_hebbian=[]
+    results_storkey=[]
+    for i in range (len(sizes)):
+        n = sizes[i]
+        c_n_hebbian = n/(2*log(n, 10))  #log base 10
+        c_n_storkey = n/(sqrt(2*log(n, 10)))
+        num_patterns_hebbian = np.linspace(0.5 * c_n_hebbian, 2 * c_n_hebbian, 10).astype(int)
+        num_patterns_storkey = np.linspace(0.5 * c_n_storkey, 2 * c_n_storkey, 10).astype(int)
 
-    results.append(e.experiment(sizes[i], num_patterns, "hebbian", 0.2*num_patterns))
-    results.append(e.experiment(sizes[i], num_patterns, "storkey", 0.2*num_patterns))
-c_n_hebbian
+        for j in range (10):
+            results_hebbian.append(e.experiment(sizes[i], num_patterns_hebbian[j], "hebbian",int(0.2*sizes[i])))
+            results_storkey.append(e.experiment(sizes[i], num_patterns_storkey[j], "storkey", int(0.2*sizes[i])))
+
+    # Create a pandas DataFrame from your results dictionary
+    df_hebbian = pd.DataFrame(results_hebbian)
+    df_storkey = pd.DataFrame(results_storkey)
+
+    # Save dataframe as an hdf5 file
+    outpath = getcwd()+"/summary/hebbian_summary.mp4"
+    df_hebbian.to_hdf(outpath, key='df_hebbian')
+
+    outpath = getcwd()+"/summary/storkey_summary.mp4"
+    df_storkey.to_hdf(outpath, key='df_storkey')
+
+    # Additionally you can let pandas print the table in markdown format for easy pasting!
+    print(df_hebbian.to_markdown())
+    print(df_storkey.to_markdown())
+
+if __name__ == '__main__':
+    main()
