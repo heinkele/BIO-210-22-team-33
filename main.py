@@ -78,16 +78,18 @@ def main():
     plt.show()
 """
 
-
-
 """-------------------------------------EXPERIMENT------------------------------------"""
 
 def main():
-    sizes=[10]
-    """, 18, 34, 63, 116, 215, 397, 733, 1354, 2500"""
+    sizes=[10,18]  # 34, 63, 116, 215, 397, 733, 1354, 2500
     results_hebbian=[]
     results_storkey=[]
+    hebbian_plots = plt.figure()
+    storkey_plots = plt.figure() 
+    nb = 0
+
     for i in range (len(sizes)):
+        nb+=1
         n = sizes[i]
         c_n_hebbian = n/(2*log(n, 10))  #log base 10
         c_n_storkey = n/(sqrt(2*log(n, 10)))
@@ -97,23 +99,28 @@ def main():
         for j in range (10):
             results_hebbian.append(e.experiment(sizes[i], num_patterns_hebbian[j], "hebbian",int(0.2*sizes[i])))
             results_storkey.append(e.experiment(sizes[i], num_patterns_storkey[j], "storkey", int(0.2*sizes[i])))
-            print("results_hebbian:", results_hebbian)
-            print("results_storkey:", results_storkey)
+
+        df_hebbian = pd.DataFrame(results_hebbian)
+        df_storkey = pd.DataFrame(results_storkey)
+
+        # Save dataframe as an hdf5 file
+        string = 'summary'+str(n)+'.hdf5'
+        outpath = getcwd()+"/summary/hebbian/"+string
+        df_hebbian.to_hdf(outpath, key='df_hebbian')
+        outpath = getcwd()+"/summary/storkey/"+string
+        df_storkey.to_hdf(outpath, key='df_storkey')
+
+        df_hebbian = hebbian_plots.add_subplot(3,4,nb) #numbers of rows and columns 3x4
+        plt.plot(df_hebbian.num_patterns, df_hebbian.match_frac)  #unrecognisable keys when plotting !!!!
+        df_storkey = storkey_plots.add_subplot(3,4,nb)
+        plt.plot(df_storkey.num_patterns, df_storkey.match_frac)
+
+        # Additionally you can let pandas print the table in markdown format for easy pasting!
+        print(df_hebbian.to_markdown())
+        print(df_storkey.to_markdown())
 
     # Create a pandas DataFrame from your results dictionary
-    df_hebbian = pd.DataFrame(results_hebbian)
-    df_storkey = pd.DataFrame(results_storkey)
-
-    # Save dataframe as an hdf5 file
-    outpath = getcwd()+"/summary/hebbian_summary.mp4"
-    df_hebbian.to_hdf(outpath, key='df_hebbian')
-
-    outpath = getcwd()+"/summary/storkey_summary.mp4"
-    df_storkey.to_hdf(outpath, key='df_storkey')
-
-    # Additionally you can let pandas print the table in markdown format for easy pasting!
-    print(df_hebbian.to_markdown())
-    print(df_storkey.to_markdown())
-
+    plt.show()
+ 
 if __name__ == '__main__':
     main()
