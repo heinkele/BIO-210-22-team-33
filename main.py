@@ -83,7 +83,8 @@ def main():
 """-------------------------------------EXPERIMENT------------------------------------"""
 
 def main():
-    sizes=[10, 18, 34, 63, 116, 215, 397, 733, 1354, 2500]
+    sizes=[10]
+    """, 18, 34, 63, 116, 215, 397, 733, 1354, 2500"""
     results_hebbian=[]
     results_storkey=[]
     for i in range (len(sizes)):
@@ -96,6 +97,8 @@ def main():
         for j in range (10):
             results_hebbian.append(e.experiment(sizes[i], num_patterns_hebbian[j], "hebbian",int(0.2*sizes[i])))
             results_storkey.append(e.experiment(sizes[i], num_patterns_storkey[j], "storkey", int(0.2*sizes[i])))
+            print("results_hebbian:", results_hebbian)
+            print("results_storkey:", results_storkey)
 
     # Create a pandas DataFrame from your results dictionary
     df_hebbian = pd.DataFrame(results_hebbian)
