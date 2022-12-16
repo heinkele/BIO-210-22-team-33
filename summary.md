@@ -17,10 +17,26 @@ We than run 10 trials, changing the number of patterns each time, for each netwo
 
 After running this experiment, we obtain the following graphs : 
 
+*insert picture or file*
 
 Followed by the following table : 
 
+*insert picture or file*
 
 ## 2. Robustness of the Network 
 
+After testing the capacity of the Network, we test its robustness by doing the same experiment as before but with an increasing purcent of pertubation (increasing 5% by 5%). To do so, we use the same sizes as before and a pattern containing two patterns each time. Our aim is to obtain the purcent of perturbations that returns a convergence bellow 90%. 
+
+After runing the experiment, we obtain the following graphs : 
+
+*insert picture or file*
+
+Followed by the following table : 
+
+*insert picture or file*
+
+We can see that we obtain a critical purcent of perturbations of : XXX% 
+
 ## 3. Image retrival examples 
+
+
