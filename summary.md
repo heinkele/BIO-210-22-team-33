@@ -15,6 +15,12 @@ In order to test the capacity of the network, we consider 10 networks of size ra
 
 We than run 10 trials, changing the number of patterns each time, for each network size by running the dynamical system varying the initial patern and the perturbation (we apply a perturbation by changing 20% of the values of each base pattern). We look at how many patterns converge to the original one, in order to compute the fraction of retrieved patterns. We have therefore a total of 200 experiments. 
 
+After running this experiment, we obtain the following graphs : 
+
+
+Followed by the following table : 
+
+
 ## 2. Robustness of the Network 
 
 ## 3. Image retrival examples 
