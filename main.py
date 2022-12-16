@@ -1,6 +1,7 @@
 import numpy as np
 import functions as f
 import experiment as e
+import robustness as r
 import matplotlib.pyplot as plt
 import pandas as pd
 from os import getcwd
@@ -79,9 +80,9 @@ def main():
 """
 
 """-------------------------------------EXPERIMENT------------------------------------"""
-
+"""
 def main():
-    sizes=[10,18,34, 63, 116, 215, 397, 733, 1354, 2500]
+    sizes=[10,18,34]
     results_hebbian=[]
     results_storkey=[]
     hebbian_plot = []
@@ -134,6 +135,26 @@ def main():
 
         print(df_hebbian.to_markdown())
         print(df_storkey.to_markdown())
+"""
+def main():
+    sizes=[10,18,34]
+    convergence_percentage_hebbian_dict = {"perturb_percentage": 0, "match_percentage" : 1}
+    convergence_percentage_hebbian_list = []
+    percentage = 0.15
+
+    while percentage <= 0.95 :
+        percentage += 0.05
+        convergence_percentage_hebbian_dict["perturb_percentage"] = percentage
+        convergence_percentage_hebbian_dict["match_percentage"] = r.robustness(sizes, "hebbian", percentage)
+        convergence_percentage_hebbian_list.append(convergence_percentage_hebbian_dict)
+
+    df_hebbian = pd.DataFrame(convergence_percentage_hebbian_list)
+
+    print(df_hebbian.to_markdown())
+
+    #df_hebbian.plot(x = 'perturb_percentage', y = 'match_percentage', label = 'hebbian')
+    #plt.show()
+
 
  
 if __name__ == '__main__':
