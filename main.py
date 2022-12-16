@@ -81,15 +81,15 @@ def main():
 """-------------------------------------EXPERIMENT------------------------------------"""
 
 def main():
-    sizes=[10,18]  # 34, 63, 116, 215, 397, 733, 1354, 2500
+    sizes=[10,18,34, 63, 116, 215, 397, 733, 1354, 2500]
     results_hebbian=[]
     results_storkey=[]
-    hebbian_plots = plt.figure()
-    storkey_plots = plt.figure() 
-    nb = 0
+    hebbian_plot = []
+    storkey_plot = []
+    df_hebbian_list = []
+    df_storkey_list = []
 
     for i in range (len(sizes)):
-        nb+=1
         n = sizes[i]
         c_n_hebbian = n/(2*log(n, 10))  #log base 10
         c_n_storkey = n/(sqrt(2*log(n, 10)))
@@ -97,30 +97,44 @@ def main():
         num_patterns_storkey = np.linspace(0.5 * c_n_storkey, 2 * c_n_storkey, 10).astype(int)
 
         for j in range (10):
-            results_hebbian.append(e.experiment(sizes[i], num_patterns_hebbian[j], "hebbian",int(0.2*sizes[i])))
-            results_storkey.append(e.experiment(sizes[i], num_patterns_storkey[j], "storkey", int(0.2*sizes[i])))
+            exp_hebbian = e.experiment(sizes[i], num_patterns_hebbian[j], "hebbian",int(0.2*sizes[i]))
+            exp_storkey = e.experiment(sizes[i], num_patterns_hebbian[j], "storkey",int(0.2*sizes[i]))
+            results_hebbian.append(exp_hebbian)
+            results_storkey.append(exp_storkey)
+            hebbian_plot.append(exp_hebbian)
+            storkey_plot.append(exp_storkey)
+
+        df_hebbian = pd.DataFrame(hebbian_plot)
+        df_storkey = pd.DataFrame(storkey_plot)
+        df_hebbian_list.append(df_hebbian)
+        df_storkey_list.append(df_storkey)
+        hebbian_plot.clear()
+        storkey_plot.clear()
+
+        fig, axes = plt.subplots(nrows=2, ncols=5)
+
+        for k in range(len(df_hebbian_list)):
+            if k < 5 :
+                df_hebbian_list[k].plot(x = 'num_patterns', y = 'match_frac', ax= axes[0,k], label = 'hebbian')
+                df_storkey_list[k].plot(x = 'num_patterns', y = 'match_frac', ax= axes[0,k], label = 'storkey')
+            else:
+                df_hebbian_list[k].plot(x = 'num_patterns', y = 'match_frac', ax= axes[1,k%5], label = 'hebbian')
+                df_storkey_list[k].plot(x = 'num_patterns', y = 'match_frac', ax= axes[1,k%5], label = 'storkey')
+        
+        plt.show()
 
         df_hebbian = pd.DataFrame(results_hebbian)
         df_storkey = pd.DataFrame(results_storkey)
 
         # Save dataframe as an hdf5 file
-        string = 'summary'+str(n)+'.hdf5'
-        outpath = getcwd()+"/summary/hebbian/"+string
+        outpath = getcwd()+"/summary/hebbian_summary.hdf5"
         df_hebbian.to_hdf(outpath, key='df_hebbian')
-        outpath = getcwd()+"/summary/storkey/"+string
+        outpath = getcwd()+"/summary/storkey_summary.hdf5"
         df_storkey.to_hdf(outpath, key='df_storkey')
 
-        df_hebbian = hebbian_plots.add_subplot(3,4,nb) #numbers of rows and columns 3x4
-        plt.plot(df_hebbian.num_patterns, df_hebbian.match_frac)  #unrecognisable keys when plotting !!!!
-        df_storkey = storkey_plots.add_subplot(3,4,nb)
-        plt.plot(df_storkey.num_patterns, df_storkey.match_frac)
-
-        # Additionally you can let pandas print the table in markdown format for easy pasting!
         print(df_hebbian.to_markdown())
         print(df_storkey.to_markdown())
 
-    # Create a pandas DataFrame from your results dictionary
-    plt.show()
  
 if __name__ == '__main__':
     main()
