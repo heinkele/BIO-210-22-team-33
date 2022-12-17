@@ -80,7 +80,7 @@ def main():
 """
 
 """-------------------------------------EXPERIMENT------------------------------------"""
-"""
+
 def main():
     sizes=[10,18,34, 63, 116, 215, 397, 733, 1354, 2500]
     results_hebbian=[]
@@ -165,7 +165,7 @@ def main():
     plt.show()
     df_storkey.plot(x = 'perturb_percentage', y = 'match_percentage', label = 'storkey', color = 'orange')
     plt.show()
-
+"""
 
  
 if __name__ == '__main__':

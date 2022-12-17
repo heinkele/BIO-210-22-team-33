@@ -2,38 +2,37 @@
 
 ## Brief introduction : 
 
-This project implements an iterative process that allows us, using the Hopfield network model, to retreive a stored (memorised) pattern from a collection of patterns. 
+This project implements an iterative process that allows us, by using the Hopfield network model, to retrieve a stored (memorised) pattern from a collection of patterns. 
 
 ## 1. Capacity of the Hopfiled network 
 
-An important feature of a Hopfield network is the storage capacity, which means how many patterns can the model store : 
-*The network is said to have stored a pattern if, when presented with a perturbed version of such pattern, the dynamical system converges to the original one* 
+An important feature of a Hopfield network is the storage capacity. This corresponds to the number of patterns that our model can store : 
+The network is said to have stored a pattern if, when presented with a perturbed version of such pattern, the dynamical system converges to the original one. 
 
-In order to test the capacity of the network, we consider 10 networks of size ranging from 10 to 2500 with logarithmically arranged neuron numbers. 
+In order to test the capacity of the network, we considered 10 networks of size ranging from 10 to 2500 with logarithmically arranged neuron numbers. 
 
 `(sizes=[10, 18, 34, 63, 116, 215, 397, 733, 1354, 2500])`
 
-We than run 10 trials, changing the number of patterns each time, for each network size by running the dynamical system varying the initial patern and the perturbation (we apply a perturbation by changing 20% of the values of each base pattern). We look at how many patterns converge to the original one, in order to compute the fraction of retrieved patterns. We have therefore a total of 200 experiments. 
+We then ran 10 trials, changing the number of patterns each time, for each network size by running the dynamical system varying the initial pattern. We applied a perturbation by changing 20% of the values of each base pattern. We then looked at how many patterns converged back to the original one, in order to compute the fraction of retrieved patterns. We have therefore a total of 200 experiments. 
 
-After running this experiment, we obtain the following graphs : 
+After running all the experiments, we obtained the following results : 
 
-*insert picture or file*
+![Capacity plots](summary/plots/capacity_plots.png "Capacity plots")
 
-Followed by the following table : 
+In a table format : 
 
-*insert picture or file*
+
+*You will be able to find all our results in hdf5 format in the summary folder.*
+
+
 
 ## 2. Robustness of the Network 
 
-After testing the capacity of the Network, we test its robustness by doing the same experiment as before but with an increasing purcent of pertubation (increasing 5% by 5%). To do so, we use the same sizes as before and a pattern containing two patterns each time. Our aim is to obtain the percent of perturbations that returns a convergence bellow 90%. 
+After testing the capacity of the Network, we want to test its robustness by doing the same experiment as before but with an increasing percent of pertubations (increasing by 5% at each iteration). To do so, we used the same sizes as previously and a pattern containing t=2 patterns each time. Our goal is to obtain the percent of perturbations at which the patterns stop converging more than 10% of the time, i.e returns a convergence below 90%. 
 
-After runing the experiment, we obtain the following graphs : 
+After runing the experiment, we obtain the following tables : 
 
-*insert picture or file*
-
-Followed by the following tables : 
-
-Hebbian robustness table : 
+Hebbian's robustness table : 
 
 |    |   perturb_percentage |   match_percentage |
 |---:|---------------------:|-------------------:|
@@ -55,7 +54,7 @@ Hebbian robustness table :
 | 15 |                 0.95 |               0    |
 
 
-Storkey robustness table:
+Storkey's robustness table:
 
 |    |   perturb_percentage |   match_percentage |
 |---:|---------------------:|-------------------:|
@@ -76,9 +75,14 @@ Storkey robustness table:
 | 14 |                 0.9  |               0    |
 | 15 |                 0.95 |               0    |
 
+![Robustness plots](summary/plots/robustness_plots.png "Robustness plots")
 
-We can see that we obtain a critical percent of perturbations of : 25-30% with the Hebbian calculations and 30-35% with the Sorkey calculations. As the perturbations are random, the penrcentage varies a little bit between each trial.   
+We can see that we obtain a critical percent of perturbations around 39% using the Hebbian rule and 39% when using the Storkey rule. We can't distinguish a major difference between the two rules in this case. As the perturbations are random, the percentage varies a little bit between each trial.
 
-## 3. Image retrival examples 
+*You will be able to find all our results in hdf5 format in the summary folder.*
+
+
+
+## 3. Image retrieval examples 
 
 
