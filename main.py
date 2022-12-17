@@ -138,22 +138,33 @@ def main():
 """
 def main():
     sizes=[10,18,34]
-    convergence_percentage_hebbian_dict = {"perturb_percentage": 0, "match_percentage" : 1}
     convergence_percentage_hebbian_list = []
+    convergence_percentage_storkey_list = []
     percentage = 0.15
 
     while percentage <= 0.95 :
         percentage += 0.05
-        convergence_percentage_hebbian_dict["perturb_percentage"] = percentage
-        convergence_percentage_hebbian_dict["match_percentage"] = r.robustness(sizes, "hebbian", percentage)
+        convergence_percentage_hebbian_dict = {"perturb_percentage": percentage, "match_percentage" : r.robustness(sizes, "hebbian", percentage)}
+        convergence_percentage_storkey_dict = {"perturb_percentage": percentage, "match_percentage" : r.robustness(sizes, "storkey", percentage)}
         convergence_percentage_hebbian_list.append(convergence_percentage_hebbian_dict)
+        convergence_percentage_storkey_list.append(convergence_percentage_storkey_dict)
 
     df_hebbian = pd.DataFrame(convergence_percentage_hebbian_list)
+    df_storkey = pd.DataFrame(convergence_percentage_storkey_list)
+
+     # Save dataframe as an hdf5 file
+    outpath = getcwd()+"/summary/hebbian_robustness.hdf5"
+    df_hebbian.to_hdf(outpath, key='df_hebbian')
+    outpath = getcwd()+"/summary/storkey_robustness.hdf5"
+    df_storkey.to_hdf(outpath, key='df_storkey')
 
     print(df_hebbian.to_markdown())
+    print(df_storkey.to_markdown())
 
-    #df_hebbian.plot(x = 'perturb_percentage', y = 'match_percentage', label = 'hebbian')
-    #plt.show()
+    df_hebbian.plot(x = 'perturb_percentage', y = 'match_percentage', label = 'hebbian')
+    plt.show()
+    df_storkey.plot(x = 'perturb_percentage', y = 'match_percentage', label = 'storkey')
+    plt.show()
 
 
  
