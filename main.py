@@ -82,7 +82,7 @@ def main():
 """-------------------------------------EXPERIMENT------------------------------------"""
 """
 def main():
-    sizes=[10,18,34]
+    sizes=[10,18,34, 63, 116, 215, 397, 733, 1354, 2500]
     results_hebbian=[]
     results_storkey=[]
     hebbian_plot = []
@@ -137,7 +137,7 @@ def main():
         print(df_storkey.to_markdown())
 """
 def main():
-    sizes=[10,18,34]
+    sizes=[10,18,34, 63, 116, 215, 397, 733, 1354, 2500]
     convergence_percentage_hebbian_list = []
     convergence_percentage_storkey_list = []
     percentage = 0.15
@@ -161,9 +161,9 @@ def main():
     print(df_hebbian.to_markdown())
     print(df_storkey.to_markdown())
 
-    df_hebbian.plot(x = 'perturb_percentage', y = 'match_percentage', label = 'hebbian')
+    df_hebbian.plot(x = 'perturb_percentage', y = 'match_percentage', label = 'hebbian', color = 'blue')
     plt.show()
-    df_storkey.plot(x = 'perturb_percentage', y = 'match_percentage', label = 'storkey')
+    df_storkey.plot(x = 'perturb_percentage', y = 'match_percentage', label = 'storkey', color = 'orange')
     plt.show()
 
 
