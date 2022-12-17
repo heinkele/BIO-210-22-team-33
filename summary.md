@@ -25,17 +25,17 @@ Followed by the following table :
 
 ## 2. Robustness of the Network 
 
-After testing the capacity of the Network, we test its robustness by doing the same experiment as before but with an increasing purcent of pertubation (increasing 5% by 5%). To do so, we use the same sizes as before and a pattern containing two patterns each time. Our aim is to obtain the purcent of perturbations that returns a convergence bellow 90%. 
+After testing the capacity of the Network, we test its robustness by doing the same experiment as before but with an increasing purcent of pertubation (increasing 5% by 5%). To do so, we use the same sizes as before and a pattern containing two patterns each time. Our aim is to obtain the percent of perturbations that returns a convergence bellow 90%. 
 
 After runing the experiment, we obtain the following graphs : 
 
 *insert picture or file*
 
-Followed by the following table : 
+Followed by the following tables : 
 
 *insert picture or file*
 
-We can see that we obtain a critical purcent of perturbations of : XXX% 
+We can see that we obtain a critical percent of perturbations of : 25-30% with the Hebbian calculations and 30-35% with the Sorkey calculations. As the perturbations are random, the penrcentage varies a little bit between each trial.   
 
 ## 3. Image retrival examples 
 
