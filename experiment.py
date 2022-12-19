@@ -1,5 +1,6 @@
 import numpy as np
 import functions as f
+from math import log, sqrt
 
 def experiment(size, num_patterns, weight_rule, num_perturb, num_trials=10, max_iter=100):
 
@@ -26,3 +27,9 @@ def experiment(size, num_patterns, weight_rule, num_perturb, num_trials=10, max_
                     "num_pertub" : num_perturb, "match_frac" : match_frac}
 
     return results_dict
+
+def c(n, rule):
+    if rule == 'hebbian' :
+        return n/(2*np.log10(n))  #log base 10
+    elif rule == 'storkey' :
+        return n/(np.sqrt(2*np.log10(n)))

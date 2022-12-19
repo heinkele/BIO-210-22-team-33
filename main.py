@@ -5,7 +5,6 @@ import robustness as r
 import matplotlib.pyplot as plt
 import pandas as pd
 from os import getcwd
-from math import log, sqrt
 
 
 
@@ -82,30 +81,40 @@ def main():
 """-------------------------------------EXPERIMENT------------------------------------"""
 
 def main():
-    sizes=[10,18,34, 63, 116, 215, 397, 733, 1354, 2500]
-    #results_hebbian=[]
-    #results_storkey=[]
+    sizes=[10, 18, 34, 63]
+    #, 116, 215, 397, 733, 1354, 2500]
     hebbian_plot = []
     storkey_plot = []
     df_hebbian_list = []
     df_storkey_list = []
+    
+    list_match_hebbian = []
+    list_match_storkey = []
 
     for i in range (len(sizes)):
         n = sizes[i]
-        c_n_hebbian = n/(2*log(n, 10))  #log base 10
-        c_n_storkey = n/(sqrt(2*log(n, 10)))
+        c_n_hebbian = e.c(n, 'hebbian')
+        c_n_storkey = e.c(n, 'storkey')
         num_patterns_hebbian = np.linspace(0.5 * c_n_hebbian, 2 * c_n_hebbian, 10).astype(int)
         num_patterns_storkey = np.linspace(0.5 * c_n_storkey, 2 * c_n_storkey, 10).astype(int)
+
+        last_one_hebbian = 0
+        last_one_storkey = 0
 
         for j in range (10):
             exp_hebbian = e.experiment(sizes[i], num_patterns_hebbian[j], "hebbian",int(0.2*sizes[i]))
             exp_storkey = e.experiment(sizes[i], num_patterns_storkey[j], "storkey",int(0.2*sizes[i]))
-            #results_hebbian.append(exp_hebbian)
-            #results_storkey.append(exp_storkey)
             hebbian_plot.append(exp_hebbian)
             storkey_plot.append(exp_storkey)
 
-        
+            if (exp_hebbian["match_frac"]>=0.9) : 
+                last_one_hebbian = exp_hebbian["num_patterns"]
+            if (exp_storkey["match_frac"]>=0.9) : 
+                last_one_storkey = exp_storkey["num_patterns"]
+
+        list_match_hebbian.append(last_one_hebbian)    
+        list_match_storkey.append(last_one_storkey)
+
 
         df_hebbian = pd.DataFrame(hebbian_plot)
         df_storkey = pd.DataFrame(storkey_plot)
@@ -135,8 +144,17 @@ def main():
         
         plt.show()
 
-    
+    plt.plot(sizes, list_match_hebbian, label = 'empirical_hebbian', color = 'blue')
+    plt.plot(sizes, list_match_storkey, label = 'empirical_storkey', color = 'orange')
+    plt.plot(sizes, e.c(sizes,'hebbian'), label = 'theoretical_hebbian', color = 'blue', alpha=0.5)
+    plt.plot(sizes, e.c(sizes,'storkey'), label = 'theoretical_storkey', color = 'orange', alpha=0.5)
+    plt.legend()
+    plt.xlabel('sizes')
+    plt.ylabel('num_pattern')
+   
 
+    plt.show()
+    
     
 
     
