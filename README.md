@@ -45,7 +45,7 @@ If you which to test the robustness of the Hopefiled Network, uncomment the part
 
 This will generate 2 graphs of the percentage of matching fraction over the percentage of perturbation, and a table of the results.  
 
-You will find more information in the file Summary.md 
+You will find more information in the file `Summary.md`
 
 
 # Testing
