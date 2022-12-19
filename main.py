@@ -83,8 +83,8 @@ def main():
 
 def main():
     sizes=[10,18,34, 63, 116, 215, 397, 733, 1354, 2500]
-    results_hebbian=[]
-    results_storkey=[]
+    #results_hebbian=[]
+    #results_storkey=[]
     hebbian_plot = []
     storkey_plot = []
     df_hebbian_list = []
@@ -99,14 +99,25 @@ def main():
 
         for j in range (10):
             exp_hebbian = e.experiment(sizes[i], num_patterns_hebbian[j], "hebbian",int(0.2*sizes[i]))
-            exp_storkey = e.experiment(sizes[i], num_patterns_hebbian[j], "storkey",int(0.2*sizes[i]))
-            results_hebbian.append(exp_hebbian)
-            results_storkey.append(exp_storkey)
+            exp_storkey = e.experiment(sizes[i], num_patterns_storkey[j], "storkey",int(0.2*sizes[i]))
+            #results_hebbian.append(exp_hebbian)
+            #results_storkey.append(exp_storkey)
             hebbian_plot.append(exp_hebbian)
             storkey_plot.append(exp_storkey)
 
+        
+
         df_hebbian = pd.DataFrame(hebbian_plot)
         df_storkey = pd.DataFrame(storkey_plot)
+
+        # Save dataframe as an hdf5 file
+        outpath = getcwd()+"/summary/hebbian_summary" + str(sizes[i]) + ".hdf5" 
+        df_hebbian.to_hdf(outpath, key='df_hebbian')
+        outpath = getcwd()+"/summary/storkey_summary" + str(sizes[i]) + ".hdf5"
+        df_storkey.to_hdf(outpath, key='df_storkey')
+        print(df_hebbian.to_markdown())
+        print(df_storkey.to_markdown())
+
         df_hebbian_list.append(df_hebbian)
         df_storkey_list.append(df_storkey)
         hebbian_plot.clear()
@@ -124,17 +135,11 @@ def main():
         
         plt.show()
 
-        df_hebbian = pd.DataFrame(results_hebbian)
-        df_storkey = pd.DataFrame(results_storkey)
+    
 
-        # Save dataframe as an hdf5 file
-        outpath = getcwd()+"/summary/hebbian_summary.hdf5"
-        df_hebbian.to_hdf(outpath, key='df_hebbian')
-        outpath = getcwd()+"/summary/storkey_summary.hdf5"
-        df_storkey.to_hdf(outpath, key='df_storkey')
+    
 
-        print(df_hebbian.to_markdown())
-        print(df_storkey.to_markdown())
+    
 """
 def main():
     sizes=[10,18,34, 63, 116, 215, 397, 733, 1354, 2500]
