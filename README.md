@@ -38,11 +38,11 @@ If you wish to run both of the previous commands at once, change the value of bo
 
 # Model Analysis 
 
-If you wish to test the capacity of the Hopefild Network, change the value of the variable named **capacity_analysis** to true in the file main.py (at the top) and run it. 
+If you wish to test the capacity of the Hopefild Network, change the value of the variable named **capacity_analysis** to `true` in the file main.py (at the top) and run it. 
 
 This will generate 10 graphs of the matching fraction over the number of patterns used and a table of the results. 
 
-If you which to test the robustness of the Hopefiled Network, change the value of the variable named **robustness_testing** in the file main.py and run it
+If you which to test the robustness of the Hopefiled Network, change the value of the variable named **robustness_testing** to `true` in the file main.py and run it
 
 This will generate 2 graphs of the percentage of matching fraction over the percentage of perturbation, and a table of the results.  
 
