@@ -7,11 +7,9 @@ import pandas as pd
 from os import getcwd
 
 
+"""--------------------------VIDEO GENERATION-----------------------------"""
 
-
-"""----------------------------VIDEO GENERATION------------------------------
-
-
+""" 
 def main():
     memorized_patterns = f.generate_patterns(50, 2500)
     memorized_patterns[2] = f.generate_initial_checkerboard().flatten()
@@ -38,15 +36,18 @@ def main():
 
     outpath = getcwd()+"/output/storkey_dynamics.mp4"
     f.save_video(S_dyn, outpath)
+"""
 
-    """"""----------------------------ENERGY FUNCTIONS------------------------------""""""
 
+"""----------------------------ENERGY FUNCTIONS------------------------------"""
+"""
+def main():
     memorized_patterns = f.generate_patterns(50, 2500)
     perturbes_pattern = f.perturb_pattern(memorized_patterns[2], 1000)
 
     W_h = f.hebbian_weights(memorized_patterns)
-    W_s = f.storkey_weights(memorized_patterns)"""
-"""
+    W_s = f.storkey_weights(memorized_patterns)
+
     history_h = f.dynamics(perturbes_pattern, W_h, 20)
     history_s = f.dynamics(perturbes_pattern, W_s, 20)
 
@@ -78,49 +79,52 @@ def main():
     plt.show()
 """
 
-"""-------------------------------------EXPERIMENT------------------------------------"""
+
+"""-------------------------------------CAPACITY ANALYSIS------------------------------------"""
 
 def main():
-    sizes=[10, 18, 34, 63]
-    #, 116, 215, 397, 733, 1354, 2500]
+    sizes = [10, 18, 34, 63, 116, 215, 397, 733, 1354, 2500]
     hebbian_plot = []
     storkey_plot = []
     df_hebbian_list = []
     df_storkey_list = []
-    
+
     list_match_hebbian = []
     list_match_storkey = []
 
-    for i in range (len(sizes)):
+    for i in range(len(sizes)):
         n = sizes[i]
         c_n_hebbian = e.c(n, 'hebbian')
         c_n_storkey = e.c(n, 'storkey')
-        num_patterns_hebbian = np.linspace(0.5 * c_n_hebbian, 2 * c_n_hebbian, 10).astype(int)
-        num_patterns_storkey = np.linspace(0.5 * c_n_storkey, 2 * c_n_storkey, 10).astype(int)
+        num_patterns_hebbian = np.linspace(
+            0.5 * c_n_hebbian, 2 * c_n_hebbian, 10).astype(int)
+        num_patterns_storkey = np.linspace(
+            0.5 * c_n_storkey, 2 * c_n_storkey, 10).astype(int)
 
         last_one_hebbian = 0
         last_one_storkey = 0
 
-        for j in range (10):
-            exp_hebbian = e.experiment(sizes[i], num_patterns_hebbian[j], "hebbian",int(0.2*sizes[i]))
-            exp_storkey = e.experiment(sizes[i], num_patterns_storkey[j], "storkey",int(0.2*sizes[i]))
+        for j in range(10):
+            exp_hebbian = e.experiment(
+                sizes[i], num_patterns_hebbian[j], "hebbian", int(0.2*sizes[i]))
+            exp_storkey = e.experiment(
+                sizes[i], num_patterns_storkey[j], "storkey", int(0.2*sizes[i]))
             hebbian_plot.append(exp_hebbian)
             storkey_plot.append(exp_storkey)
 
-            if (exp_hebbian["match_frac"]>=0.9) : 
+            if (exp_hebbian["match_frac"] >= 0.9):
                 last_one_hebbian = exp_hebbian["num_patterns"]
-            if (exp_storkey["match_frac"]>=0.9) : 
+            if (exp_storkey["match_frac"] >= 0.9):
                 last_one_storkey = exp_storkey["num_patterns"]
 
-        list_match_hebbian.append(last_one_hebbian)    
+        list_match_hebbian.append(last_one_hebbian)
         list_match_storkey.append(last_one_storkey)
-
 
         df_hebbian = pd.DataFrame(hebbian_plot)
         df_storkey = pd.DataFrame(storkey_plot)
 
         # Save dataframe as an hdf5 file
-        outpath = getcwd()+"/summary/hebbian_summary" + str(sizes[i]) + ".hdf5" 
+        outpath = getcwd()+"/summary/hebbian_summary" + str(sizes[i]) + ".hdf5"
         df_hebbian.to_hdf(outpath, key='df_hebbian')
         outpath = getcwd()+"/summary/storkey_summary" + str(sizes[i]) + ".hdf5"
         df_storkey.to_hdf(outpath, key='df_storkey')
@@ -135,47 +139,60 @@ def main():
         fig, axes = plt.subplots(nrows=2, ncols=5)
 
         for k in range(len(df_hebbian_list)):
-            if k < 5 :
-                df_hebbian_list[k].plot(x = 'num_patterns', y = 'match_frac', ax= axes[0,k], label = 'hebbian')
-                df_storkey_list[k].plot(x = 'num_patterns', y = 'match_frac', ax= axes[0,k], label = 'storkey')
-            else:
-                df_hebbian_list[k].plot(x = 'num_patterns', y = 'match_frac', ax= axes[1,k%5], label = 'hebbian')
-                df_storkey_list[k].plot(x = 'num_patterns', y = 'match_frac', ax= axes[1,k%5], label = 'storkey')
-        
+            plt.subplot(5, 2, k+1)
+            plt.plot(df_hebbian_list[k]['num_patterns'],
+                     df_hebbian_list[k]['match_frac'], label='hebbian')
+            plt.legend()
+            plt.xlabel("num_patterns")
+            plt.ylabel("match_frac")
+            plt.subplot(5, 2, k+1)
+            plt.plot(df_storkey_list[k]['num_patterns'],
+                     df_storkey_list[k]['match_frac'], label='storkey')
+            plt.legend()
+            plt.xlabel("num_patterns")
+            plt.ylabel("match_frac")
+
         plt.show()
 
-    plt.plot(sizes, list_match_hebbian, label = 'empirical_hebbian', color = 'blue')
-    plt.plot(sizes, list_match_storkey, label = 'empirical_storkey', color = 'orange')
-    plt.plot(sizes, e.c(sizes,'hebbian'), label = 'theoretical_hebbian', color = 'blue', alpha=0.5)
-    plt.plot(sizes, e.c(sizes,'storkey'), label = 'theoretical_storkey', color = 'orange', alpha=0.5)
+    plt.plot(sizes, list_match_hebbian,
+             label='empirical_hebbian', color='blue')
+    plt.plot(sizes, list_match_storkey,
+             label='empirical_storkey', color='orange')
+    plt.plot(sizes, e.c(sizes, 'hebbian'),
+             label='theoretical_hebbian', color='blue', alpha=0.5)
+    plt.plot(sizes, e.c(sizes, 'storkey'),
+             label='theoretical_storkey', color='orange', alpha=0.5)
     plt.legend()
     plt.xlabel('sizes')
     plt.ylabel('num_pattern')
-   
 
     plt.show()
-    
-    
 
-    
+
+"""-------------------------------------ROBUSTNESS TESTING------------------------------------"""
+
 """
 def main():
-    sizes=[10,18,34, 63, 116, 215, 397, 733, 1354, 2500]
+    sizes = [10, 18, 34, 63, 116, 215, 397, 733, 1354, 2500]
     convergence_percentage_hebbian_list = []
     convergence_percentage_storkey_list = []
     percentage = 0.15
 
-    while percentage <= 0.95 :
+    while percentage <= 0.95:
         percentage += 0.05
-        convergence_percentage_hebbian_dict = {"perturb_percentage": percentage, "match_percentage" : r.robustness(sizes, "hebbian", percentage)}
-        convergence_percentage_storkey_dict = {"perturb_percentage": percentage, "match_percentage" : r.robustness(sizes, "storkey", percentage)}
-        convergence_percentage_hebbian_list.append(convergence_percentage_hebbian_dict)
-        convergence_percentage_storkey_list.append(convergence_percentage_storkey_dict)
+        convergence_percentage_hebbian_dict = {
+            "perturb_percentage": percentage, "match_percentage": r.robustness(sizes, "hebbian", percentage)}
+        convergence_percentage_storkey_dict = {
+            "perturb_percentage": percentage, "match_percentage": r.robustness(sizes, "storkey", percentage)}
+        convergence_percentage_hebbian_list.append(
+            convergence_percentage_hebbian_dict)
+        convergence_percentage_storkey_list.append(
+            convergence_percentage_storkey_dict)
 
     df_hebbian = pd.DataFrame(convergence_percentage_hebbian_list)
     df_storkey = pd.DataFrame(convergence_percentage_storkey_list)
 
-     # Save dataframe as an hdf5 file
+    # Save dataframe as an hdf5 file
     outpath = getcwd()+"/summary/hebbian_robustness.hdf5"
     df_hebbian.to_hdf(outpath, key='df_hebbian')
     outpath = getcwd()+"/summary/storkey_robustness.hdf5"
@@ -184,12 +201,13 @@ def main():
     print(df_hebbian.to_markdown())
     print(df_storkey.to_markdown())
 
-    df_hebbian.plot(x = 'perturb_percentage', y = 'match_percentage', label = 'hebbian', color = 'blue')
+    df_hebbian.plot(x='perturb_percentage', y='match_percentage',
+                    label='hebbian', color='blue')
     plt.show()
-    df_storkey.plot(x = 'perturb_percentage', y = 'match_percentage', label = 'storkey', color = 'orange')
+    df_storkey.plot(x='perturb_percentage', y='match_percentage',
+                    label='storkey', color='orange')
     plt.show()
 """
 
- 
 if __name__ == '__main__':
     main()
