@@ -7,16 +7,15 @@ import pandas as pd
 from os import getcwd
 
 
-video_generation = False
-energy_functions = False
-capacity_analysis = True
-robustness_testing = False
+def main():
 
+    video_generation = False
+    energy_functions = False
+    capacity_analysis = True
+    robustness_testing = False
 
 #--------------------------VIDEO GENERATION-----------------------------
 
-
-def main():
     if video_generation == True :
         memorized_patterns = f.generate_patterns(50, 2500)
         memorized_patterns[2] = f.generate_initial_checkerboard().flatten()
@@ -90,8 +89,7 @@ def main():
 #-------------------------------------CAPACITY ANALYSIS------------------------------------
 
     if capacity_analysis == True : 
-        sizes = [10, 18, 34, 63]
-        #, 116, 215, 397, 733, 1354, 2500]
+        sizes = [10, 18, 34, 63, 116, 215, 397, 733, 1354, 2500]
         hebbian_plot = []
         storkey_plot = []
         df_hebbian_list = []

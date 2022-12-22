@@ -7,20 +7,17 @@ def experiment(size, num_patterns, weight_rule, num_perturb, num_trials=10, max_
     match = 0
     memorized_patterns = f.generate_patterns(num_patterns, size)
 
+    if weight_rule == "hebbian":
+        W = f.hebbian_weights(memorized_patterns)     
+    elif weight_rule == "storkey":
+        W = f.storkey_weights(memorized_patterns)
+
     for i in range (num_trials): #10 trials per num pattern
         j = np.random.randint(num_patterns)
         perturbed_pattern = f.perturb_pattern(memorized_patterns[j], num_perturb)
-        if weight_rule == "hebbian":
-            W = f.hebbian_weights(memorized_patterns)
-            H_dyn = f.dynamics(perturbed_pattern.copy(), W, max_iter)
-            if (memorized_patterns[j] == H_dyn[-1]).all():
-                match += 1
-                
-        elif weight_rule == "storkey":
-            W = f.storkey_weights(memorized_patterns)
-            H_dyn = f.dynamics(perturbed_pattern.copy(), W, max_iter)
-            if (memorized_patterns[j] == H_dyn[-1]).all():
-                match += 1
+        H_dyn = f.dynamics(perturbed_pattern.copy(), W, max_iter)
+        if (memorized_patterns[j] == H_dyn[-1]).all():
+            match += 1
     
     match_frac = match / num_trials
     results_dict = {"network_size" : size, "weight_rule": weight_rule, "num_patterns" : num_patterns,
