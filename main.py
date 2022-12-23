@@ -14,9 +14,9 @@ def main():
     capacity_analysis = True
     robustness_testing = False
 
-#--------------------------VIDEO GENERATION-----------------------------
+# --------------------------VIDEO GENERATION-----------------------------
 
-    if video_generation == True :
+    if video_generation == True:
         memorized_patterns = f.generate_patterns(50, 2500)
         memorized_patterns[2] = f.generate_initial_checkerboard().flatten()
         perturbes_pattern = f.perturb_pattern(memorized_patterns[2], 1000)
@@ -44,10 +44,9 @@ def main():
         f.save_video(S_dyn, outpath)
 
 
+# ----------------------------ENERGY FUNCTIONS------------------------------
 
-#----------------------------ENERGY FUNCTIONS------------------------------
-
-    if video_generation == True :
+    if video_generation == True:
         memorized_patterns = f.generate_patterns(50, 2500)
         perturbes_pattern = f.perturb_pattern(memorized_patterns[2], 1000)
 
@@ -57,38 +56,39 @@ def main():
         history_h = f.dynamics(perturbes_pattern, W_h, 20)
         history_s = f.dynamics(perturbes_pattern, W_s, 20)
 
-        history_async_h = f.dynamics_async(perturbes_pattern, W_h, 30000, 10000)
-        history_async_s = f.dynamics_async(perturbes_pattern, W_s, 30000, 10000)
+        history_async_h = f.dynamics_async(
+            perturbes_pattern, W_h, 30000, 10000)
+        history_async_s = f.dynamics_async(
+            perturbes_pattern, W_s, 30000, 10000)
 
         plt.figure
 
         plt.subplot(221)
         plt.title('Hebbian weigths and update')
         plt.plot(f.plot_energy(history_h, W_h).keys(),
-                f.plot_energy(history_h, W_h).values())
+                 f.plot_energy(history_h, W_h).values())
 
         plt.subplot(222)
         plt.title('Hebbian weigths and update_async')
         plt.plot(f.plot_energy(history_async_h, W_h).keys(),
-                f.plot_energy(history_async_h, W_h).values())
+                 f.plot_energy(history_async_h, W_h).values())
 
         plt.subplot(223)
         plt.title('Storkey weigths and update')
         plt.plot(f.plot_energy(history_s, W_s).keys(),
-                f.plot_energy(history_s, W_s).values())
+                 f.plot_energy(history_s, W_s).values())
 
         plt.subplot(224)
         plt.title('Storkey weigths and update_async')
         plt.plot(f.plot_energy(history_async_s, W_s).keys(),
-                f.plot_energy(history_async_s, W_s).values())
+                 f.plot_energy(history_async_s, W_s).values())
 
         plt.show()
 
 
+# -------------------------------------CAPACITY ANALYSIS------------------------------------
 
-#-------------------------------------CAPACITY ANALYSIS------------------------------------
-
-    if capacity_analysis == True : 
+    if capacity_analysis == True:
         sizes = [10, 18, 34, 63, 116, 215, 397, 733, 1354, 2500]
         hebbian_plot = []
         storkey_plot = []
@@ -98,7 +98,7 @@ def main():
         list_match_hebbian = []
         list_match_storkey = []
 
-        for i in range(len(sizes)): #iteration on all the sizes
+        for i in range(len(sizes)):  # iteration on all the sizes
             n = sizes[i]
             c_n_hebbian = e.c(n, 'hebbian')
             c_n_storkey = e.c(n, 'storkey')
@@ -110,7 +110,7 @@ def main():
             last_one_hebbian = 0
             last_one_storkey = 0
 
-            for j in range(10): #iteration on all the different num patterns per size
+            for j in range(10):  # iteration on all the different num patterns per size
                 exp_hebbian = e.experiment(
                     sizes[i], num_patterns_hebbian[j], "hebbian", int(0.2*sizes[i]))
                 exp_storkey = e.experiment(
@@ -130,9 +130,11 @@ def main():
             df_storkey = pd.DataFrame(storkey_plot)
 
             # Save dataframe as an hdf5 file
-            outpath = getcwd()+"/summary/hebbian_summary" + str(sizes[i]) + ".hdf5"
+            outpath = getcwd()+"/summary/hebbian_summary" + \
+                str(sizes[i]) + ".hdf5"
             df_hebbian.to_hdf(outpath, key='df_hebbian')
-            outpath = getcwd()+"/summary/storkey_summary" + str(sizes[i]) + ".hdf5"
+            outpath = getcwd()+"/summary/storkey_summary" + \
+                str(sizes[i]) + ".hdf5"
             df_storkey.to_hdf(outpath, key='df_storkey')
             print(df_hebbian.to_markdown())
             print(df_storkey.to_markdown())
@@ -144,14 +146,15 @@ def main():
 
             fig, axes = plt.subplots(nrows=2, ncols=5)
 
-            for k in range(len(df_hebbian_list)): #iteration to realize all the subplots
+            # iteration to realize all the subplots
+            for k in range(len(df_hebbian_list)):
                 plt.subplot(5, 2, k+1)
                 plt.plot(df_hebbian_list[k]['num_patterns'],
-                        df_hebbian_list[k]['match_frac'], label='hebbian')
+                         df_hebbian_list[k]['match_frac'], label='hebbian')
                 plt.legend()
                 plt.subplot(5, 2, k+1)
                 plt.plot(df_storkey_list[k]['num_patterns'],
-                        df_storkey_list[k]['match_frac'], label='storkey')
+                         df_storkey_list[k]['match_frac'], label='storkey')
                 plt.legend()
                 plt.xlabel("num_patterns")
                 plt.ylabel("match_frac")
@@ -160,13 +163,13 @@ def main():
             plt.show()
 
         plt.plot(sizes, list_match_hebbian,
-                label='empirical_hebbian', color='blue')
+                 label='empirical_hebbian', color='blue')
         plt.plot(sizes, list_match_storkey,
-                label='empirical_storkey', color='orange')
+                 label='empirical_storkey', color='orange')
         plt.plot(sizes, e.c(sizes, 'hebbian'),
-                label='theoretical_hebbian', color='blue', alpha=0.5)
+                 label='theoretical_hebbian', color='blue', alpha=0.5)
         plt.plot(sizes, e.c(sizes, 'storkey'),
-                label='theoretical_storkey', color='orange', alpha=0.5)
+                 label='theoretical_storkey', color='orange', alpha=0.5)
         plt.legend()
         plt.xlabel('sizes')
         plt.ylabel('num_pattern')
@@ -174,10 +177,9 @@ def main():
         plt.show()
 
 
-#-------------------------------------ROBUSTNESS TESTING------------------------------------
+# -------------------------------------ROBUSTNESS TESTING------------------------------------
 
-
-    if robustness_testing == True :
+    if robustness_testing == True:
         sizes = [10, 18, 34, 63, 116, 215, 397, 733, 1354, 2500]
         convergence_percentage_hebbian_list = []
         convergence_percentage_storkey_list = []
