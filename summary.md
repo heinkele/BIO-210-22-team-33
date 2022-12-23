@@ -21,16 +21,17 @@ After running all the experiments, we obtained the following results :
 
 *You will be able to find all our results in hdf5 format in the summary folder or in markdown format in the **3.** .*
 
+We can observe that very quickly the capacity drops even with very small numbers of patterns. This could be due to the weakness of our model.
+
 Following the study of the capacity of our model, we wanted to compare our empirical capacity curves with their theoretical estimates. For that, we only focused on the number of patterns that can be retrieved with more than 90% probability.
 
 ![Theoretical comparaison plot](summary/plots/theoretical_comp_plot.png "Theoretical comparaison plot")
 
-**NOT NORMAL : THIS IS MUST BE DUE TO OUR LOW VALUES (FOR EXAMPLE HEBBIAN IS SOMETIMES NEVER EQUALS TO 1)**
-We can see that, for each rule, the empirical curve is lower than the theoretical one. The tendencies are the same but for the same neuronal network size, less patterns are capable to be stored  The difference is most likely due to the small number of trials which we do (10) for each experiment. If we would increase this number, then our curves would most likely be much similar to the theoretical estimates.
+We can see that, for each rule, the empirical curve is lower than the theoretical one. The tendencies are the same but for the same neuronal network size, less patterns are capable to be stored  The difference is most likely due to the small number of trials which we do (10) for each experiment. If we would increase this number, then our curves would most likely be much similar to the theoretical estimates. A slight error in the capacity calculation could also be the source of this imprecision. 
 
 ## 2. Robustness of the Network 
 
-After testing the capacity of the Network, we want to test its robustness by doing the same experiment as before but with an increasing percent of pertubations (increasing by 5% at each iteration). To do so, we used the same sizes as previously and a pattern containing t=2 patterns each time. Our goal is to obtain the percent of perturbations at which the patterns stop converging more than 10% of the time, i.e returns a convergence below 90%. 
+After testing the capacity of the Network, we want to test its robustness by doing the same experiment as previously but with an increasing percentage of pertubations (increasing by 5% at each iteration). To do so, we used the same sizes as previously and a pattern containing t=2 patterns each time. Our goal is to obtain the percent of perturbations at which the patterns stop converging more than 10% of the time, i.e returns a convergence below 90%. 
 
 After runing the experiment, we obtain the following results :
 
